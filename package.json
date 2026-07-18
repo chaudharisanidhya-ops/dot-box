@@ -1,0 +1,8 @@
+{
+  "name": "dots-and-boxes-arcade",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npx vite"
+  }
+}
