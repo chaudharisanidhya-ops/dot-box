@@ -3,32 +3,32 @@
    ========================================================================== */
 
 :root {
-  /* Color Tokens */
-  --bg-primary: #f8fafc;
-  --bg-secondary: #ffffff;
-  --text-main: #0f172a;
+  /* Color Tokens - Optimized for light glassmorphism */
+  --bg-primary: #edf2f7;
+  --bg-secondary: rgba(255, 255, 255, 0.45);
+  --text-main: #1e293b;
   --text-muted: #64748b;
-  --border-color: rgba(226, 232, 240, 0.8);
-  --board-bg: #ffffff;
-  --dot-color: #94a3b8;
-  --line-unselected: #e2e8f0;
-  --line-hover: #cbd5e1;
+  --border-color: rgba(255, 255, 255, 0.6);
+  --board-bg: rgba(255, 255, 255, 0.5);
+  --dot-color: #64748b;
+  --line-unselected: rgba(0, 0, 0, 0.08);
+  --line-hover: rgba(0, 0, 0, 0.16);
 
   /* Default Player Colors (Overwritten dynamically via JS variables) */
-  --p1-color-rgb: 79, 70, 229;
+  --p1-color-rgb: 99, 102, 241; /* Indigo */
   --p1-color: rgb(var(--p1-color-rgb));
-  --p1-color-light: rgba(var(--p1-color-rgb), 0.12);
-  --p2-color-rgb: 225, 29, 72;
+  --p1-color-light: rgba(var(--p1-color-rgb), 0.22);
+  --p2-color-rgb: 244, 63, 94;  /* Rose */
   --p2-color: rgb(var(--p2-color-rgb));
-  --p2-color-light: rgba(var(--p2-color-rgb), 0.12);
+  --p2-color-light: rgba(var(--p2-color-rgb), 0.22);
 
   /* UI Styling constants */
   --radius-sm: 8px;
   --radius-md: 16px;
   --radius-lg: 24px;
-  --shadow-sm: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-  --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-  --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 10px 15px -3px rgba(31, 38, 135, 0.06), 0 4px 6px -4px rgba(31, 38, 135, 0.06);
+  --shadow-lg: 0 20px 25px -5px rgba(31, 38, 135, 0.08), 0 8px 10px -6px rgba(31, 38, 135, 0.08);
   --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -69,26 +69,27 @@ html {
 .bg-blur {
   position: absolute;
   border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.4;
+  filter: blur(120px);
+  opacity: 0.65;
   z-index: -1;
   pointer-events: none;
+  transition: all 1s ease;
 }
 
 .bg-blur-1 {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, var(--p1-color-light) 0%, rgba(255,255,255,0) 70%);
-  top: -10%;
-  left: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(255,255,255,0) 75%);
+  top: -15%;
+  left: -15%;
 }
 
 .bg-blur-2 {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, var(--p2-color-light) 0%, rgba(255,255,255,0) 70%);
-  bottom: -10%;
-  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(244, 63, 94, 0.25) 0%, rgba(255,255,255,0) 75%);
+  bottom: -15%;
+  right: -15%;
 }
 
 /* Main Container */
@@ -192,14 +193,14 @@ html {
 }
 
 .menu-card {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   padding: 30px;
   border-radius: var(--radius-lg);
   width: 100%;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.06);
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -222,10 +223,10 @@ html {
 /* Segmented Controls (Buttons configured like tabs) */
 .segmented-control {
   display: flex;
-  background: #f1f5f9;
+  background: rgba(15, 23, 42, 0.04);
   padding: 5px;
   border-radius: var(--radius-md);
-  border: 1px solid rgba(226, 232, 240, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   gap: 4px;
 }
 
@@ -248,9 +249,9 @@ html {
 }
 
 .segmented-control button.active {
-  background: var(--bg-secondary);
+  background: #ffffff;
   color: var(--text-main);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 /* Grid Sizes layout custom overlay */
@@ -264,8 +265,8 @@ html {
 .segmented-control.grid-sizes button {
   flex-direction: column;
   padding: 16px;
-  border: 1px solid var(--line-unselected);
-  background: var(--bg-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.35);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
 }
@@ -275,9 +276,9 @@ html {
 }
 
 .segmented-control.grid-sizes button.active {
-  background: var(--bg-secondary);
+  background: #ffffff;
   border: 2px solid var(--p1-color);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
 }
 
 .size-title {
@@ -326,8 +327,8 @@ html {
 
 .player-config {
   flex: 1;
-  background: #f8fafc;
-  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: var(--radius-md);
   padding: 14px;
   display: flex;
@@ -484,12 +485,13 @@ html {
 .scoreboard {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   padding: 6px;
   border-radius: 30px;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.04);
 }
 
 .versus-divider {
@@ -568,8 +570,8 @@ html {
 /* Active Player turns indicator glow */
 .p1-card.active {
   border-color: var(--p1-color);
-  background-color: var(--bg-secondary);
-  box-shadow: 0 0 12px rgba(79, 70, 229, 0.15);
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.12);
 }
 
 .p1-card.active .player-name {
@@ -584,8 +586,8 @@ html {
 
 .p2-card.active {
   border-color: var(--p2-color);
-  background-color: var(--bg-secondary);
-  box-shadow: 0 0 12px rgba(225, 29, 72, 0.15);
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.12);
 }
 
 .p2-card.active .player-name {
@@ -608,12 +610,14 @@ html {
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-main);
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 8px 20px;
   border-radius: 20px;
   display: inline-block;
   box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 /* ==========================================================================
@@ -623,12 +627,13 @@ html {
 .board-outer-container {
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: var(--radius-lg);
   padding: 24px;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 12px 40px rgba(31, 38, 135, 0.05);
   margin-bottom: 24px;
   display: flex;
   justify-content: center;
@@ -785,21 +790,21 @@ html {
    ========================================================================== */
 
 .modal-overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 100;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.35s ease;
 }
 
 .modal-overlay.active {
@@ -808,20 +813,34 @@ html {
 }
 
 .modal-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+  position: relative;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: var(--radius-lg);
   padding: 36px;
   width: 90%;
   max-width: 440px;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 16px 48px rgba(31, 38, 135, 0.08);
   text-align: center;
-  transform: scale(0.9) translateY(20px);
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform: scale(0.85) translateY(30px);
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .modal-overlay.active .modal-card {
   transform: scale(1) translateY(0);
+}
+
+#game-over-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .trophy-container {
@@ -1551,6 +1570,27 @@ html {
 
 .leaderboard-section-title:not(:empty)::after {
   margin-left: .75em;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.8) translateY(15px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.modal-overlay.active #winner-title {
+  animation: popIn 0.5s 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.modal-overlay.active #winner-subtitle {
+  animation: popIn 0.5s 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.modal-overlay.active .modal-score-summary {
+  animation: popIn 0.5s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.modal-overlay.active .modal-buttons {
+  animation: popIn 0.5s 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 

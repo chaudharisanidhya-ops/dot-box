@@ -167,6 +167,214 @@ class GameSoundEffects {
   }
 }
 
+// Particle FX engine for Game Over screen
+class GameOverParticles {
+  constructor() {
+    this.canvas = null;
+    this.ctx = null;
+    this.animationId = null;
+    this.particles = [];
+    this.type = null; // 'win', 'loss', 'tie'
+    this.active = false;
+    this.handleResize = this.handleResize.bind(this);
+  }
+
+  init(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    if (!this.canvas) return;
+    this.ctx = this.canvas.getContext('2d');
+    this.resizeCanvas();
+    window.addEventListener('resize', this.handleResize);
+  }
+
+  resizeCanvas() {
+    if (this.canvas) {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+    }
+  }
+
+  handleResize() {
+    if (this.active) {
+      this.resizeCanvas();
+      this.spawnParticles();
+    }
+  }
+
+  start(type) {
+    this.stop();
+    this.type = type;
+    this.active = true;
+    this.resizeCanvas();
+    this.spawnParticles();
+    this.loop();
+  }
+
+  stop() {
+    this.active = false;
+    if (this.animationId) {
+      cancelAnimationFrame(this.animationId);
+      this.animationId = null;
+    }
+    if (this.ctx) {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+    this.particles = [];
+    window.removeEventListener('resize', this.handleResize);
+  }
+
+  spawnParticles() {
+    this.particles = [];
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+
+    if (this.type === 'win') {
+      const colors = ['#6366f1', '#f43f5e', '#10b981', '#fbbf24', '#a855f7', '#06b6d4'];
+      const count = 120;
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 4 + Math.random() * 8;
+        this.particles.push({
+          x: w / 2,
+          y: h * 0.4,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 5,
+          width: 8 + Math.random() * 8,
+          height: 12 + Math.random() * 10,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotationSpeed: -10 + Math.random() * 20,
+          gravity: 0.15 + Math.random() * 0.1,
+          drag: 0.97 + Math.random() * 0.02
+        });
+      }
+    } else if (this.type === 'loss') {
+      const fontSize = 16;
+      const columns = Math.ceil(w / fontSize);
+      this.particles = Array(columns).fill().map((_, i) => ({
+        x: i * fontSize,
+        y: Math.random() * -h,
+        speed: 2 + Math.random() * 5,
+        chars: Array(15).fill().map(() => Math.random() > 0.5 ? '1' : '0')
+      }));
+    } else if (this.type === 'tie') {
+      const count = 30;
+      const colors = ['rgba(99, 102, 241, 0.15)', 'rgba(244, 63, 94, 0.15)', 'rgba(100, 116, 139, 0.15)'];
+      for (let i = 0; i < count; i++) {
+        this.particles.push({
+          x: Math.random() * w,
+          y: h + Math.random() * 100,
+          vx: -0.5 + Math.random(),
+          vy: -0.5 - Math.random() * 1.5,
+          radius: 10 + Math.random() * 30,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          amplitude: 10 + Math.random() * 20,
+          frequency: 0.01 + Math.random() * 0.02,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+    }
+  }
+
+  loop() {
+    if (!this.active) return;
+    this.update();
+    this.draw();
+    this.animationId = requestAnimationFrame(() => this.loop());
+  }
+
+  update() {
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+
+    if (this.type === 'win') {
+      this.particles.forEach(p => {
+        p.vx *= p.drag;
+        p.vy *= p.drag;
+        p.vy += p.gravity;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rotation += p.rotationSpeed * 0.1;
+
+        if (p.y > h + 20) {
+          p.x = w / 2;
+          p.y = h * 0.4;
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 3 + Math.random() * 6;
+          p.vx = Math.cos(angle) * speed;
+          p.vy = Math.sin(angle) * speed - 3;
+        }
+      });
+    } else if (this.type === 'loss') {
+      const fontSize = 16;
+      this.particles.forEach(p => {
+        p.y += p.speed;
+        if (p.y > h + fontSize * 15) {
+          p.y = -fontSize * 15;
+          p.speed = 2 + Math.random() * 5;
+        }
+        if (Math.random() > 0.9) {
+          p.chars[Math.floor(Math.random() * p.chars.length)] = Math.random() > 0.5 ? '1' : '0';
+        }
+      });
+    } else if (this.type === 'tie') {
+      this.particles.forEach(p => {
+        p.y += p.vy;
+        p.phase += p.frequency;
+        p.x += Math.sin(p.phase) * 0.3 + p.vx * 0.1;
+
+        if (p.y < -p.radius) {
+          p.y = h + p.radius + Math.random() * 50;
+          p.x = Math.random() * w;
+        }
+      });
+    }
+  }
+
+  draw() {
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    this.ctx.clearRect(0, 0, w, h);
+
+    if (this.type === 'win') {
+      this.particles.forEach(p => {
+        this.ctx.save();
+        this.ctx.translate(p.x, p.y);
+        this.ctx.rotate((p.rotation * Math.PI) / 180);
+        this.ctx.fillStyle = p.color;
+        this.ctx.fillRect(-p.width / 2, -p.height / 2, p.width, p.height);
+        this.ctx.restore();
+      });
+    } else if (this.type === 'loss') {
+      const fontSize = 16;
+      this.ctx.font = `${fontSize}px monospace`;
+      this.particles.forEach(p => {
+        for (let i = 0; i < p.chars.length; i++) {
+          const charY = p.y - i * fontSize;
+          if (charY < 0 || charY > h) continue;
+
+          const opacity = (p.chars.length - i) / p.chars.length;
+          if (i === 0) {
+            this.ctx.fillStyle = `rgba(244, 63, 94, 0.95)`;
+          } else {
+            this.ctx.fillStyle = `rgba(99, 102, 241, ${opacity * 0.4})`;
+          }
+          this.ctx.fillText(p.chars[i], p.x, charY);
+        }
+      });
+    } else if (this.type === 'tie') {
+      this.particles.forEach(p => {
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        this.ctx.fillStyle = p.color;
+        this.ctx.fill();
+        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        this.ctx.stroke();
+      });
+    }
+  }
+}
+
 // Game Manager Object
 const Game = {
   // Config & State
@@ -199,6 +407,43 @@ const Game = {
   // Audio Handler
   sounds: new GameSoundEffects(),
 
+  // Particle Engine
+  particles: new GameOverParticles(),
+
+  // Funny Texts for Game Over screen
+  funnyTexts: {
+    aiWin: [
+      "You beat a bucket of bolts! Skynet has postponed the apocalypse.",
+      "Einstein would be proud... or extremely jealous of your dot-connecting skills.",
+      "Victory! You proved that carbon-based life forms still rule this grid.",
+      "Wow, you actually won! Did you secretly slide some cookies into my CPU?",
+      "AI takes over the world? Not on your watch. Take that, silicon!"
+    ],
+    aiLoss: [
+      "Defeated by a few lines of JavaScript. Go grab a coffee and reboot your brain.",
+      "The computer outsmarted you. Maybe try tic-tac-toe next time?",
+      "My developer is crying. You let a simple algorithm draw circles around you.",
+      "Is your cursor lagging, or was that a 'tactical surrender'?",
+      "Beep boop! The AI has conquered your grid and is now checking your browser history."
+    ],
+    aiTie: [
+      "A tie! How anticlimactic. Did you both agree to be perfectly average?",
+      "Neither won. You shook hands with a machine. How polite, and how boring.",
+      "Perfect balance. You matched a computer step-for-step, yet nobody gets bragging rights."
+    ],
+    pvpWin: [
+      "{winner} wins! {loser}, please go stand in the corner and think about your moves.",
+      "Grid dominance achieved by {winner}! {loser} is officially banned from connecting dots.",
+      "{winner} destroyed the board! {loser}, would you like some fries with all that salt?",
+      "Victory for {winner}! {loser} was left connecting dots in the dark.",
+      "{winner} reigns supreme! {loser}, maybe stick to coloring books?"
+    ],
+    pvpTie: [
+      "It's a draw! You both fought valiantly to achieve absolutely nothing.",
+      "A tie! You both deserve a gold star... and a rematch to end this mediocrity."
+    ]
+  },
+
   // Element Cache
   screens: {
     menu: null,
@@ -215,6 +460,9 @@ const Game = {
     this.setupMenuEventListeners();
     this.setupGameEventListeners();
     this.sounds.updateMuteUI();
+
+    // Initialize Particles
+    this.particles.init('game-over-particles');
   },
 
   // Color parsing helper for dynamic styling
@@ -379,6 +627,7 @@ const Game = {
       replayBtn.addEventListener('click', () => {
         const modal = document.getElementById('game-over-modal');
         if (modal) modal.classList.remove('active');
+        this.particles.stop();
         this.startNewGame();
       });
     }
@@ -388,6 +637,7 @@ const Game = {
       menuBtn.addEventListener('click', () => {
         const modal = document.getElementById('game-over-modal');
         if (modal) modal.classList.remove('active');
+        this.particles.stop();
         this.transitionToScreen('menu');
       });
     }
@@ -1023,22 +1273,46 @@ const Game = {
     // Remove tie class by default
     modal.querySelector('.modal-card').classList.remove('tie');
 
+    let animType = 'tie';
     if (this.p1Score > this.p2Score) {
       title.textContent = `${this.p1Name} Wins!`;
-      subtitle.textContent = "Outstanding strategy and grid dominance!";
+      animType = 'win';
+      if (this.gameMode === 'ai') {
+        const msgs = this.funnyTexts.aiWin;
+        subtitle.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+      } else {
+        const msgs = this.funnyTexts.pvpWin;
+        subtitle.textContent = msgs[Math.floor(Math.random() * msgs.length)]
+          .replace('{winner}', this.p1Name)
+          .replace('{loser}', this.p2Name);
+      }
       this.sounds.playWin();
     } else if (this.p2Score > this.p1Score) {
       title.textContent = `${this.p2Name} Wins!`;
-      subtitle.textContent = this.gameMode === 'ai' ? "The AI outsmarted you. Try again!" : "Victory is sweet! Excellent game.";
       if (this.gameMode === 'ai') {
+        animType = 'loss';
+        const msgs = this.funnyTexts.aiLoss;
+        subtitle.textContent = msgs[Math.floor(Math.random() * msgs.length)];
         this.sounds.playLoss();
       } else {
+        animType = 'win';
+        const msgs = this.funnyTexts.pvpWin;
+        subtitle.textContent = msgs[Math.floor(Math.random() * msgs.length)]
+          .replace('{winner}', this.p2Name)
+          .replace('{loser}', this.p1Name);
         this.sounds.playWin();
       }
     } else {
       title.textContent = "It's a Draw!";
-      subtitle.textContent = "A perfectly symmetrical match of minds.";
+      animType = 'tie';
       modal.querySelector('.modal-card').classList.add('tie');
+      if (this.gameMode === 'ai') {
+        const msgs = this.funnyTexts.aiTie;
+        subtitle.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+      } else {
+        const msgs = this.funnyTexts.pvpTie;
+        subtitle.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+      }
       this.sounds.playTie();
     }
 
@@ -1059,6 +1333,7 @@ const Game = {
     // Display modal
     setTimeout(() => {
       modal.classList.add('active');
+      this.particles.start(animType);
     }, 600);
   },
 
