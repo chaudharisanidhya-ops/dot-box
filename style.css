@@ -46,11 +46,13 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-main);
   min-height: 100vh;
-  width: 100vw;
+  width: 100%;
+  max-width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   margin: 0;
   padding: 0;
@@ -58,6 +60,9 @@ body {
 
 html {
   height: 100%;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* Background Blurs for Visual Depth */
@@ -314,8 +319,9 @@ html {
 /* Player Configuration inputs */
 .player-custom-row {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-direction: row;
+  gap: 16px;
+  width: 100%;
 }
 
 .player-config {
@@ -909,20 +915,153 @@ html {
   display: none !important;
 }
 
-/* Extra small screens adjustments */
-@media (max-width: 400px) {
+/* Mobile and Small Screen Optimizations */
+@media (max-width: 480px) {
+  .app-container {
+    padding: 12px 10px;
+  }
+  
+  .hero-header {
+    margin-bottom: 12px;
+  }
+
+  .logo-icon {
+    margin-bottom: 4px;
+    gap: 6px;
+  }
+
+  .dot-p {
+    width: 10px;
+    height: 10px;
+  }
+
+  .line-p {
+    width: 35px;
+    height: 4px;
+  }
+
   .hero-header h1 {
     font-size: 2rem;
   }
+
+  .subtitle {
+    font-size: 0.85rem;
+  }
+
   .menu-card {
-    padding: 20px;
-    gap: 16px;
+    padding: 16px 14px;
+    gap: 14px;
   }
+
+  .form-group {
+    gap: 6px;
+  }
+
+  .form-group > label {
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+
+  .segmented-control {
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .segmented-control button {
+    padding: 8px 6px;
+    font-size: 0.85rem;
+    gap: 4px;
+  }
+
+  .segmented-control button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Compact Grid Size Buttons on Mobile */
+  .segmented-control.grid-sizes {
+    gap: 6px;
+  }
+
+  .segmented-control.grid-sizes button {
+    padding: 8px 4px;
+    border-radius: var(--radius-sm);
+  }
+
+  .size-title {
+    font-size: 0.85rem;
+  }
+
+  .size-desc {
+    font-size: 0.68rem;
+    margin-top: 1px;
+  }
+
+  /* Compact Side-by-Side Player configs */
   .player-custom-row {
-    flex-direction: column;
+    flex-direction: row;
+    gap: 8px;
   }
+
+  .player-config {
+    padding: 10px 6px;
+    gap: 8px;
+    border-radius: var(--radius-sm);
+  }
+
+  .color-indicator {
+    width: 18px;
+    height: 18px;
+  }
+
+  .player-config input {
+    font-size: 0.8rem;
+    padding: 2px;
+  }
+
+  .color-palette {
+    gap: 5px;
+  }
+
+  .color-dot {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Button sizes */
+  .primary-btn {
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
+
+  .secondary-btn {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+  
+  .menu-buttons-row {
+    gap: 8px;
+  }
+
+  /* Game Board Container sizing */
   .board-outer-container {
-    padding: 16px;
+    padding: 12px;
+    border-radius: var(--radius-md);
+  }
+  
+  /* Status Panel height */
+  .status-panel {
+    margin-bottom: 12px;
+  }
+}
+
+/* Height-based adjustments for scroll overflow */
+@media (max-height: 850px) {
+  body {
+    align-items: flex-start;
+  }
+  .app-container {
+    padding: 20px 12px;
   }
 }
 
@@ -1022,4 +1161,397 @@ html {
     padding: 20px;
   }
 }
+
+/* ==========================================================================
+   Friends Leaderboard Styling Additions
+   ========================================================================== */
+
+/* Menu Buttons Row */
+.menu-buttons-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.menu-buttons-row .primary-btn {
+  width: 100%;
+}
+
+.menu-buttons-row .secondary-btn {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 1.05rem;
+  justify-content: center;
+}
+
+/* Leaderboard Modal Styling */
+.leaderboard-card {
+  max-width: 480px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.modal-header h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 2.2rem;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0 4px;
+  transition: color 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  color: var(--text-main);
+  transform: scale(1.1);
+}
+
+.leaderboard-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.leaderboard-content-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding-right: 4px;
+  min-height: 200px;
+}
+
+/* Custom Scrollbar for Leaderboard list */
+.leaderboard-content-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.leaderboard-content-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.leaderboard-content-wrapper::-webkit-scrollbar-thumb {
+  background: var(--line-unselected);
+  border-radius: 3px;
+}
+
+.leaderboard-content-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Leaderboard Items */
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  background: rgba(248, 250, 252, 0.6);
+  border: 1px solid var(--border-color);
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.leaderboard-item:hover {
+  transform: translateY(-1px);
+  background: rgba(241, 245, 249, 0.8);
+  border-color: rgba(203, 213, 225, 0.8);
+}
+
+.friend-rank {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  width: 28px;
+  display: flex;
+  align-items: center;
+}
+
+.friend-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--p1-color) 0%, #312e81 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-right: 12px;
+  box-shadow: 0 4px 6px rgba(79, 70, 229, 0.1);
+}
+
+.friend-info {
+  flex: 1;
+  text-align: left;
+}
+
+.friend-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.friend-stats-summary {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex;
+  gap: 8px;
+}
+
+.stat-badge {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.stat-badge.w {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.stat-badge.l {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.stat-badge.d {
+  background: rgba(100, 116, 139, 0.1);
+  color: #64748b;
+}
+
+.friend-performance {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.win-rate-text {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.win-rate-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* W/L Ratio bar */
+.wl-ratio-bar {
+  width: 60px;
+  height: 4px;
+  background: var(--line-unselected);
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex;
+}
+
+.wl-ratio-win {
+  height: 100%;
+  background: #10b981;
+}
+
+.wl-ratio-loss {
+  height: 100%;
+  background: #ef4444;
+}
+
+.wl-ratio-draw {
+  height: 100%;
+  background: #94a3b8;
+}
+
+/* Empty State Styling */
+.leaderboard-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.empty-state-icon {
+  margin-bottom: 16px;
+  color: var(--line-hover);
+}
+
+.empty-state-text {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  max-width: 280px;
+}
+
+/* Footer Styling */
+.leaderboard-footer {
+  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.reset-stats-btn {
+  background: transparent;
+  border: 1px dashed var(--line-unselected);
+  color: var(--text-muted);
+  font-family: var(--font-family);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.reset-stats-btn:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.05);
+}
+
+/* VS Computer Card */
+.computer-stats-card {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(49, 46, 129, 0.04) 100%);
+  border: 1.5px solid rgba(79, 70, 229, 0.15);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.computer-stats-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.05);
+}
+
+.computer-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.computer-avatar {
+  font-size: 1.6rem;
+  width: 42px;
+  height: 42px;
+  background: white;
+  border: 1px solid rgba(79, 70, 229, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.computer-info {
+  flex: 1;
+}
+
+.computer-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.computer-record-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.computer-winrate {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+}
+
+.winrate-num {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--p1-color);
+}
+
+.winrate-lbl {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.computer-ratio-bar {
+  width: 100% !important;
+  height: 6px !important;
+  border-radius: 3px !important;
+}
+
+/* Leaderboard Section Divider */
+.leaderboard-section-title {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 16px 0 6px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.leaderboard-section-title::before,
+.leaderboard-section-title::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1.5px solid var(--border-color);
+}
+
+.leaderboard-section-title:not(:empty)::before {
+  margin-right: .75em;
+}
+
+.leaderboard-section-title:not(:empty)::after {
+  margin-left: .75em;
+}
+
+
 

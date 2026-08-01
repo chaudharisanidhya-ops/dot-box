@@ -185,6 +185,12 @@ const Game = {
   isGameOver: false,
   isAiThinking: false,
 
+  // Local Stats persistence
+  stats: {
+    friends: {},
+    ai: { wins: 0, losses: 0, draws: 0 }
+  },
+
   // Grid states
   hLines: [], // size: (gridSize+1) x gridSize
   vLines: [], // size: gridSize x (gridSize+1)
@@ -205,6 +211,7 @@ const Game = {
     this.screens.menu = document.getElementById('menu-screen');
     this.screens.game = document.getElementById('game-screen');
     
+    this.loadStats();
     this.setupMenuEventListeners();
     this.setupGameEventListeners();
     this.sounds.updateMuteUI();
@@ -305,6 +312,40 @@ const Game = {
         this.launchGame();
       });
     }
+
+    // View Leaderboard Button
+    const viewLeaderboardBtn = document.getElementById('view-leaderboard-btn');
+    if (viewLeaderboardBtn) {
+      viewLeaderboardBtn.addEventListener('click', () => {
+        this.openLeaderboard();
+      });
+    }
+
+    // Close Leaderboard Button
+    const closeLeaderboardBtn = document.getElementById('leaderboard-close-btn');
+    if (closeLeaderboardBtn) {
+      closeLeaderboardBtn.addEventListener('click', () => {
+        this.closeLeaderboard();
+      });
+    }
+
+    // Reset Leaderboard Button
+    const resetLeaderboardBtn = document.getElementById('leaderboard-reset-btn');
+    if (resetLeaderboardBtn) {
+      resetLeaderboardBtn.addEventListener('click', () => {
+        this.resetLeaderboard();
+      });
+    }
+
+    // Click outside modal overlay to close
+    const leaderboardModal = document.getElementById('leaderboard-modal');
+    if (leaderboardModal) {
+      leaderboardModal.addEventListener('click', (e) => {
+        if (e.target === leaderboardModal) {
+          this.closeLeaderboard();
+        }
+      });
+    }
   },
 
   setupGameEventListeners() {
@@ -384,7 +425,8 @@ const Game = {
   },
 
   getInitials(name) {
-    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    if (!name || typeof name !== 'string') return '??';
+    return name.split(' ').filter(Boolean).map(n => n[0]).join('').substring(0, 2).toUpperCase();
   },
 
   startNewGame() {
@@ -1000,10 +1042,208 @@ const Game = {
       this.sounds.playTie();
     }
 
+    // Record matchup results (PVP or AI)
+    let result = 'draw';
+    if (this.p1Score > this.p2Score) {
+      result = 'win';
+    } else if (this.p2Score > this.p1Score) {
+      result = 'loss';
+    }
+
+    if (this.gameMode === 'pvp') {
+      this.recordMatchup(this.p2Name, result);
+    } else if (this.gameMode === 'ai') {
+      this.recordAIResult(result);
+    }
+
     // Display modal
     setTimeout(() => {
       modal.classList.add('active');
     }, 600);
+  },
+
+  loadStats() {
+    try {
+      const saved = localStorage.getItem('dots_boxes_matchups');
+      if (saved) {
+        this.stats = JSON.parse(saved);
+      }
+    } catch (e) {
+      console.error("Error parsing stats", e);
+    }
+    
+    // Ensure all required fields exist to prevent runtime errors
+    if (!this.stats || typeof this.stats !== 'object') {
+      this.stats = { friends: {}, ai: { wins: 0, losses: 0, draws: 0 } };
+    }
+    if (!this.stats.friends || typeof this.stats.friends !== 'object') {
+      this.stats.friends = {};
+    }
+    if (!this.stats.ai || typeof this.stats.ai !== 'object') {
+      this.stats.ai = { wins: 0, losses: 0, draws: 0 };
+    }
+  },
+
+  saveStats() {
+    localStorage.setItem('dots_boxes_matchups', JSON.stringify(this.stats));
+  },
+
+  recordMatchup(friendName, result) {
+    if (!this.stats || !this.stats.friends) {
+      this.loadStats();
+    }
+    const cleanName = (friendName || '').trim() || 'Player 2';
+    if (!this.stats.friends[cleanName]) {
+      this.stats.friends[cleanName] = { wins: 0, losses: 0, draws: 0 };
+    }
+    if (result === 'win') {
+      this.stats.friends[cleanName].wins++;
+    } else if (result === 'loss') {
+      this.stats.friends[cleanName].losses++;
+    } else {
+      this.stats.friends[cleanName].draws++;
+    }
+    this.saveStats();
+  },
+
+  recordAIResult(result) {
+    if (!this.stats || !this.stats.ai) {
+      this.loadStats();
+    }
+    if (result === 'win') {
+      this.stats.ai.wins++;
+    } else if (result === 'loss') {
+      this.stats.ai.losses++;
+    } else {
+      this.stats.ai.draws++;
+    }
+    this.saveStats();
+  },
+
+  openLeaderboard() {
+    this.loadStats();
+    const modal = document.getElementById('leaderboard-modal');
+    const listContainer = document.getElementById('leaderboard-list');
+    if (!modal || !listContainer) return;
+
+    listContainer.innerHTML = '';
+    
+    // 1. Render Computer Matchups Card at the top
+    const aiStats = this.stats.ai || { wins: 0, losses: 0, draws: 0 };
+    const aiTotal = (aiStats.wins || 0) + (aiStats.losses || 0) + (aiStats.draws || 0);
+    const aiWinRate = aiTotal > 0 ? Math.round(((aiStats.wins || 0) / aiTotal) * 100) : 0;
+    
+    const aiWinPct = aiTotal > 0 ? ((aiStats.wins || 0) / aiTotal) * 100 : 0;
+    const aiLossPct = aiTotal > 0 ? ((aiStats.losses || 0) / aiTotal) * 100 : 0;
+    const aiDrawPct = aiTotal > 0 ? ((aiStats.draws || 0) / aiTotal) * 100 : 0;
+
+    const aiCard = document.createElement('div');
+    aiCard.className = 'computer-stats-card';
+    aiCard.innerHTML = `
+      <div class="computer-card-header">
+        <div class="computer-avatar">🤖</div>
+        <div class="computer-info">
+          <div class="computer-title">vs. Computer (AI)</div>
+          <div class="computer-record-text">${aiStats.wins || 0} Wins &middot; ${aiStats.losses || 0} Losses${(aiStats.draws || 0) > 0 ? ` &middot; ${aiStats.draws} Draws` : ''}</div>
+        </div>
+        <div class="computer-winrate">
+          <span class="winrate-num">${aiWinRate}%</span>
+          <span class="winrate-lbl">Win Rate</span>
+        </div>
+      </div>
+      <div class="wl-ratio-bar computer-ratio-bar">
+        <div class="wl-ratio-win" style="width: ${aiWinPct}%"></div>
+        <div class="wl-ratio-draw" style="width: ${aiDrawPct}%"></div>
+        <div class="wl-ratio-loss" style="width: ${aiLossPct}%"></div>
+      </div>
+    `;
+    listContainer.appendChild(aiCard);
+
+    // Section title for Friends
+    const sectionTitle = document.createElement('div');
+    sectionTitle.className = 'leaderboard-section-title';
+    sectionTitle.innerHTML = `<span>Friends Matchups</span>`;
+    listContainer.appendChild(sectionTitle);
+
+    // 2. Render Friends Matchups
+    const friends = Object.entries(this.stats.friends || {});
+    
+    if (friends.length === 0) {
+      const emptyState = document.createElement('div');
+      emptyState.className = 'leaderboard-empty-state';
+      emptyState.innerHTML = `
+        <svg class="empty-state-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        <div class="empty-state-text" style="font-size: 0.9rem; max-width: 240px; margin: 8px auto 0;">No matchups against friends yet. Play a Pass & Play match!</div>
+      `;
+      listContainer.appendChild(emptyState);
+    } else {
+      // Convert to array and sort by Win Rate, then wins, then total matches
+      const sortedFriends = friends.map(([name, data]) => {
+        const wins = data?.wins || 0;
+        const losses = data?.losses || 0;
+        const draws = data?.draws || 0;
+        const total = wins + losses + draws;
+        const winRate = total > 0 ? Math.round((wins / total) * 100) : 0;
+        return { name, wins, losses, draws, total, winRate };
+      }).sort((a, b) => {
+        if (b.winRate !== a.winRate) return b.winRate - a.winRate;
+        if (b.wins !== a.wins) return b.wins - a.wins;
+        return b.total - a.total;
+      });
+
+      sortedFriends.forEach((friend, index) => {
+        const initials = this.getInitials(friend.name);
+        const winPct = friend.total > 0 ? (friend.wins / friend.total) * 100 : 0;
+        const lossPct = friend.total > 0 ? (friend.losses / friend.total) * 100 : 0;
+        const drawPct = friend.total > 0 ? (friend.draws / friend.total) * 100 : 0;
+
+        const item = document.createElement('div');
+        item.className = 'leaderboard-item';
+        item.innerHTML = `
+          <div class="friend-rank">#${index + 1}</div>
+          <div class="friend-avatar">${initials}</div>
+          <div class="friend-info">
+            <div class="friend-name">${friend.name}</div>
+            <div class="friend-stats-summary">
+              <span class="stat-badge w">${friend.wins}W</span>
+              <span class="stat-badge l">${friend.losses}L</span>
+              ${friend.draws > 0 ? `<span class="stat-badge d">${friend.draws}D</span>` : ''}
+            </div>
+          </div>
+          <div class="friend-performance">
+            <div class="win-rate-text">${friend.winRate}%</div>
+            <div class="win-rate-label">Win Rate</div>
+            <div class="wl-ratio-bar">
+              <div class="wl-ratio-win" style="width: ${winPct}%"></div>
+              <div class="wl-ratio-draw" style="width: ${drawPct}%"></div>
+              <div class="wl-ratio-loss" style="width: ${lossPct}%"></div>
+            </div>
+          </div>
+        `;
+        listContainer.appendChild(item);
+      });
+    }
+
+    modal.classList.add('active');
+  },
+
+  closeLeaderboard() {
+    const modal = document.getElementById('leaderboard-modal');
+    if (modal) modal.classList.remove('active');
+  },
+
+  resetLeaderboard() {
+    if (confirm("Are you sure you want to clear all matchup history? This will clear both Computer and Friends statistics.")) {
+      this.stats.friends = {};
+      this.stats.ai = { wins: 0, losses: 0, draws: 0 };
+      this.saveStats();
+      this.openLeaderboard();
+    }
   }
 };
 
