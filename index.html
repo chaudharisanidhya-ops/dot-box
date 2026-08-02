@@ -22,14 +22,26 @@
   <div class="app-container">
     <!-- MENU SCREEN -->
     <section id="menu-screen" class="screen active">
-      <div class="hero-header">
-        <div class="logo-icon">
-          <span class="dot-p dot-p1"></span>
-          <span class="line-p"></span>
-          <span class="dot-p dot-p2"></span>
+      <!-- Top header bar in Dashboard -->
+      <div class="menu-top-header">
+        <div class="menu-label">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+          </svg>
+          <span>MENU</span>
         </div>
+        <button class="mute-btn icon-btn" title="Toggle Sound" aria-label="Toggle Sound">
+          <svg class="mute-icon-sound" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          <svg class="mute-icon-silence hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+        </button>
+      </div>
+
+      <div class="menu-title-section">
         <h1>Dots & Boxes</h1>
-        <p class="subtitle">A premium grid-conquering strategy game</p>
+        <p class="subtitle">A timeless strategy duel.</p>
       </div>
 
       <div class="menu-card">
@@ -38,11 +50,9 @@
           <label>Game Mode</label>
           <div class="segmented-control" id="mode-control">
             <button class="active" data-mode="ai" id="btn-mode-ai">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10v4a2 2 0 0 1-2 2h-1a2 2 0 0 0-2 2v1a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H4a2 2 0 0 1-2-2v-4A10 10 0 0 1 12 2z"/><rect x="9" y="11" width="6" height="4" rx="1"/></svg>
               <span>vs Computer</span>
             </button>
             <button data-mode="pvp" id="btn-mode-pvp">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
               <span>Pass & Play</span>
             </button>
           </div>
@@ -51,7 +61,7 @@
         <!-- AI Difficulty Selector -->
         <div class="form-group" id="difficulty-group">
           <label>AI Difficulty</label>
-          <div class="segmented-control mini" id="difficulty-control">
+          <div class="segmented-control diff-sizes" id="difficulty-control">
             <button data-difficulty="easy" id="btn-diff-easy">Easy</button>
             <button class="active" data-difficulty="medium" id="btn-diff-medium">Medium</button>
             <button data-difficulty="hard" id="btn-diff-hard">Hard</button>
@@ -63,59 +73,71 @@
           <label>Grid Size</label>
           <div class="segmented-control grid-sizes" id="size-control">
             <button data-size="3" id="btn-size-small">
-              <span class="size-title">Small</span>
-              <span class="size-desc">3 × 3 Boxes</span>
+              <span class="size-title">3</span>
+              <span class="size-desc">3x3</span>
             </button>
             <button class="active" data-size="5" id="btn-size-medium">
-              <span class="size-title">Medium</span>
-              <span class="size-desc">5 × 5 Boxes</span>
+              <span class="size-title">5</span>
+              <span class="size-desc">5x5</span>
             </button>
             <button data-size="7" id="btn-size-large">
-              <span class="size-title">Large</span>
-              <span class="size-desc">7 × 7 Boxes</span>
+              <span class="size-title">7</span>
+              <span class="size-desc">7x7</span>
             </button>
           </div>
         </div>
 
-        <!-- Customizations -->
+        <!-- Players Customization Layout -->
         <div class="form-group">
-          <label>Players Customize</label>
-          <div class="player-custom-row">
-            <!-- Player 1 Customizer -->
-            <div class="player-config p1-config">
-              <div class="color-indicator p1-color-bg"></div>
-              <input type="text" id="p1-name-input" value="Player 1" placeholder="P1 Name" maxlength="12">
-              <div class="color-palette">
-                <button type="button" class="color-dot active" data-color="#4f46e5" style="background: #4f46e5;"></button>
-                <button type="button" class="color-dot" data-color="#06b6d4" style="background: #06b6d4;"></button>
-                <button type="button" class="color-dot" data-color="#10b981" style="background: #10b981;"></button>
-                <button type="button" class="color-dot" data-color="#eab308" style="background: #eab308;"></button>
+          <label class="section-label">PLAYERS CUSTOMIZE</label>
+          <div class="players-customize-row">
+            <!-- Player 1 Customization Card -->
+            <div class="player-custom-card">
+              <div class="selected-color-preview" id="p1-preview-dot"></div>
+              <input type="text" id="p1-name-input" class="custom-name-input" value="Player 1" placeholder="Player 1" maxlength="12">
+              <div class="card-divider"></div>
+              <div class="color-options-row" id="p1-color-palette">
+                <button type="button" class="color-dot active" data-color="#3f47e0" style="background: #3f47e0; --selected-color: #3f47e0;"></button>
+                <button type="button" class="color-dot" data-color="#b91c1c" style="background: #b91c1c; --selected-color: #b91c1c;"></button>
+                <button type="button" class="color-dot hidden" data-color="#6b7bba" style="background: #6b7bba; --selected-color: #6b7bba;"></button>
+                <button type="button" class="color-dot hidden" data-color="#f97316" style="background: #f97316; --selected-color: #f97316;"></button>
+                <button type="button" class="color-more-btn" id="p1-more-colors-btn">+</button>
               </div>
             </div>
-            
-            <!-- Player 2 Customizer -->
-            <div class="player-config p2-config">
-              <div class="color-indicator p2-color-bg"></div>
-              <input type="text" id="p2-name-input" value="Computer" placeholder="P2 Name" maxlength="12">
-              <div class="color-palette">
-                <button type="button" class="color-dot active" data-color="#e11d48" style="background: #e11d48;"></button>
-                <button type="button" class="color-dot" data-color="#ec4899" style="background: #ec4899;"></button>
-                <button type="button" class="color-dot" data-color="#f97316" style="background: #f97316;"></button>
-                <button type="button" class="color-dot" data-color="#8b5cf6" style="background: #8b5cf6;"></button>
+
+            <!-- Player 2 Customization Card -->
+            <div class="player-custom-card">
+              <div class="selected-color-preview" id="p2-preview-dot"></div>
+              <input type="text" id="p2-name-input" class="custom-name-input" value="Computer" placeholder="Computer" maxlength="12">
+              <div class="card-divider"></div>
+              <div class="color-options-row" id="p2-color-palette">
+                <button type="button" class="color-dot" data-color="#3f47e0" style="background: #3f47e0; --selected-color: #3f47e0;"></button>
+                <button type="button" class="color-dot active" data-color="#b91c1c" style="background: #b91c1c; --selected-color: #b91c1c;"></button>
+                <button type="button" class="color-dot hidden" data-color="#6b7bba" style="background: #6b7bba; --selected-color: #6b7bba;"></button>
+                <button type="button" class="color-dot hidden" data-color="#f97316" style="background: #f97316; --selected-color: #f97316;"></button>
+                <button type="button" class="color-more-btn" id="p2-more-colors-btn">+</button>
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- View Leaderboard button inside the menu card container --><!-- View Leaderboard button inside the menu card container -->
+        <div class="leaderboard-row">
+          <button id="view-leaderboard-btn" class="leaderboard-link-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20V10"></path>
+              <path d="M18 20V4"></path>
+              <path d="M6 20v-4"></path>
+            </svg>
+            <span>VIEW LEADERBOARD</span>
+          </button>
         </div>
 
         <!-- Start Button -->
-        <div class="menu-buttons-row">
+        <div class="start-btn-row">
           <button id="start-game-btn" class="primary-btn">
-            Play Game
+            <span>Play Game</span>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </button>
-          <button id="view-leaderboard-btn" class="secondary-btn" title="View Matchups against Friends" aria-label="View Matchups against Friends">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"/><path d="M12 2a6 6 0 0 1 6 6v5a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8a6 6 0 0 1 6-6z"/></svg>
-            <span>Leaderboard</span>
           </button>
         </div>
       </div>
@@ -123,58 +145,71 @@
 
     <!-- GAME SCREEN -->
     <section id="game-screen" class="screen">
-      <!-- Game Header Controls & Scoreboard -->
-      <div class="game-header">
-        <button id="back-to-menu-btn" class="icon-btn" title="Exit to Menu" aria-label="Exit to Menu">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      <!-- Game Top Header Controls -->
+      <div class="game-top-header">
+        <button id="back-to-menu-btn" class="icon-back-btn" title="Exit to Menu" aria-label="Exit to Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
         </button>
-        
-        <div class="scoreboard">
-          <div class="player-score-card p1-card active" id="p1-card">
-            <span class="player-avatar p1-avatar-initial">P1</span>
-            <div class="player-meta">
-              <span class="player-name" id="p1-name-display">Player 1</span>
-              <span class="player-score" id="p1-score-display">0</span>
-            </div>
-          </div>
+        <div class="game-title">Dots & Boxes</div>
+        <button class="mute-btn icon-btn" title="Toggle Sound" aria-label="Toggle Sound">
+          <svg class="mute-icon-sound" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          <svg class="mute-icon-silence hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+        </button>
+      </div>
 
-          <div class="versus-divider">vs</div>
-
-          <div class="player-score-card p2-card" id="p2-card">
-            <div class="player-meta">
-              <span class="player-name" id="p2-name-display">Computer</span>
-              <span class="player-score" id="p2-score-display">0</span>
-            </div>
-            <span class="player-avatar p2-avatar-initial">AI</span>
-          </div>
+      <!-- Scoreboard Row with central Turn pill indicator -->
+      <div class="game-scoreboard-row">
+        <div class="player-score-col left" id="p1-card">
+          <span class="player-score-label">PLAYER 1</span>
+          <span class="player-score-value" id="p1-score-display">0</span>
         </div>
-
-        <button id="mute-btn" class="icon-btn" title="Toggle Sound" aria-label="Toggle Sound">
-          <svg id="mute-icon-sound" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-          <svg id="mute-icon-silence" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
-        </button>
+        
+        <div class="turn-indicator-container">
+          <div class="turn-indicator-pill" id="turn-indicator-pill">Player 1's Turn</div>
+        </div>
+        
+        <div class="player-score-col right" id="p2-card">
+          <span class="player-score-label" id="p2-name-display">COMPUTER</span>
+          <span class="player-score-value" id="p2-score-display">0</span>
+        </div>
       </div>
 
-      <!-- Action Panel & Board status -->
-      <div class="status-panel">
-        <p id="game-status-text">Your turn! Connect two dots.</p>
-      </div>
-
-      <!-- Interactive SVG Game Board -->
-      <div class="board-outer-container">
+      <!-- Board Wrapper -->
+      <div class="board-card">
         <div class="board-inner-wrapper">
           <svg id="game-board-svg" width="100%" height="100%"></svg>
         </div>
       </div>
 
-      <!-- Bottom controls -->
-      <div class="game-footer">
-        <button id="reset-game-btn" class="secondary-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-          Restart Game
-        </button>
+      <!-- Helper instructions below board -->
+      <div class="game-instruction-text">
+        Tap a space between two dots to draw a line. Complete a box to score a point.
+      </div>
+
+      <!-- Floating bottom control dock -->
+      <div class="bottom-dock-container">
+        <div class="bottom-dock">
+          <!-- Restart button -->
+          <button id="reset-game-btn" class="dock-btn" title="Restart Game" aria-label="Restart Game">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+            </svg>
+          </button>
+          
+          <!-- Undo button -->
+          <button id="undo-btn" class="dock-btn undo-btn-highlight" title="Undo Move" aria-label="Undo Move">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7v6h6"/>
+              <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </section>
+  </div>
   </div>
 
   <!-- LEADERBOARD OVERLAY MODAL -->

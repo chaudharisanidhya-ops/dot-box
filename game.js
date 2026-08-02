@@ -249,14 +249,25 @@ class GameOverParticles {
         });
       }
     } else if (this.type === 'loss') {
-      const fontSize = 16;
-      const columns = Math.ceil(w / fontSize);
-      this.particles = Array(columns).fill().map((_, i) => ({
-        x: i * fontSize,
-        y: Math.random() * -h,
-        speed: 2 + Math.random() * 5,
-        chars: Array(15).fill().map(() => Math.random() > 0.5 ? '1' : '0')
-      }));
+      const colors = ['#ef4444', '#b91c1c', '#f87171', '#dc2626', '#991b1b', '#64748b'];
+      const count = 120;
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 4 + Math.random() * 8;
+        this.particles.push({
+          x: w / 2,
+          y: h * 0.4,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 5,
+          width: 8 + Math.random() * 8,
+          height: 12 + Math.random() * 10,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotationSpeed: -10 + Math.random() * 20,
+          gravity: 0.15 + Math.random() * 0.1,
+          drag: 0.97 + Math.random() * 0.02
+        });
+      }
     } else if (this.type === 'tie') {
       const count = 30;
       const colors = ['rgba(99, 102, 241, 0.15)', 'rgba(244, 63, 94, 0.15)', 'rgba(100, 116, 139, 0.15)'];
@@ -287,7 +298,7 @@ class GameOverParticles {
     const w = this.canvas.width;
     const h = this.canvas.height;
 
-    if (this.type === 'win') {
+    if (this.type === 'win' || this.type === 'loss') {
       this.particles.forEach(p => {
         p.vx *= p.drag;
         p.vy *= p.drag;
@@ -303,18 +314,6 @@ class GameOverParticles {
           const speed = 3 + Math.random() * 6;
           p.vx = Math.cos(angle) * speed;
           p.vy = Math.sin(angle) * speed - 3;
-        }
-      });
-    } else if (this.type === 'loss') {
-      const fontSize = 16;
-      this.particles.forEach(p => {
-        p.y += p.speed;
-        if (p.y > h + fontSize * 15) {
-          p.y = -fontSize * 15;
-          p.speed = 2 + Math.random() * 5;
-        }
-        if (Math.random() > 0.9) {
-          p.chars[Math.floor(Math.random() * p.chars.length)] = Math.random() > 0.5 ? '1' : '0';
         }
       });
     } else if (this.type === 'tie') {
@@ -336,7 +335,7 @@ class GameOverParticles {
     const h = this.canvas.height;
     this.ctx.clearRect(0, 0, w, h);
 
-    if (this.type === 'win') {
+    if (this.type === 'win' || this.type === 'loss') {
       this.particles.forEach(p => {
         this.ctx.save();
         this.ctx.translate(p.x, p.y);
@@ -344,23 +343,6 @@ class GameOverParticles {
         this.ctx.fillStyle = p.color;
         this.ctx.fillRect(-p.width / 2, -p.height / 2, p.width, p.height);
         this.ctx.restore();
-      });
-    } else if (this.type === 'loss') {
-      const fontSize = 16;
-      this.ctx.font = `${fontSize}px monospace`;
-      this.particles.forEach(p => {
-        for (let i = 0; i < p.chars.length; i++) {
-          const charY = p.y - i * fontSize;
-          if (charY < 0 || charY > h) continue;
-
-          const opacity = (p.chars.length - i) / p.chars.length;
-          if (i === 0) {
-            this.ctx.fillStyle = `rgba(244, 63, 94, 0.95)`;
-          } else {
-            this.ctx.fillStyle = `rgba(99, 102, 241, ${opacity * 0.4})`;
-          }
-          this.ctx.fillText(p.chars[i], p.x, charY);
-        }
       });
     } else if (this.type === 'tie') {
       this.particles.forEach(p => {
@@ -383,8 +365,9 @@ const Game = {
   aiDifficulty: 'medium',
   p1Name: 'Player 1',
   p2Name: 'Computer',
-  p1Color: '#4f46e5',
-  p2Color: '#e11d48',
+  p1Color: '#3f47e0',
+  p2Color: '#b91c1c',
+  history: [],
   
   // Dynamic scores & Turn
   p1Score: 0,
@@ -459,6 +442,7 @@ const Game = {
     this.loadStats();
     this.setupMenuEventListeners();
     this.setupGameEventListeners();
+    this.setupColorPalettes();
     this.sounds.updateMuteUI();
 
     // Initialize Particles
@@ -481,15 +465,20 @@ const Game = {
     const btnModeAi = document.getElementById('btn-mode-ai');
     const btnModePvp = document.getElementById('btn-mode-pvp');
     const diffGroup = document.getElementById('difficulty-group');
-    const p2NameInput = document.getElementById('p2-name-input');
 
     if (btnModeAi) {
       btnModeAi.addEventListener('click', () => {
         btnModeAi.classList.add('active');
         if (btnModePvp) btnModePvp.classList.remove('active');
         if (diffGroup) diffGroup.classList.remove('hidden');
-        if (p2NameInput) p2NameInput.value = 'Computer';
         this.gameMode = 'ai';
+        this.p2Name = 'Computer';
+        const label = document.getElementById('p2-color-label');
+        if (label) label.textContent = 'Computer Color';
+        const nameLabel = document.getElementById('p2-name-label');
+        if (nameLabel) nameLabel.textContent = 'Computer Name';
+        const nameInput = document.getElementById('p2-name-input');
+        if (nameInput) nameInput.value = 'Computer';
       });
     }
 
@@ -498,8 +487,14 @@ const Game = {
         btnModePvp.classList.add('active');
         if (btnModeAi) btnModeAi.classList.remove('active');
         if (diffGroup) diffGroup.classList.add('hidden');
-        if (p2NameInput) p2NameInput.value = 'Player 2';
         this.gameMode = 'pvp';
+        this.p2Name = 'Player 2';
+        const label = document.getElementById('p2-color-label');
+        if (label) label.textContent = 'Player 2 Color';
+        const nameLabel = document.getElementById('p2-name-label');
+        if (nameLabel) nameLabel.textContent = 'Player 2 Name';
+        const nameInput = document.getElementById('p2-name-input');
+        if (nameInput) nameInput.value = 'Player 2';
       });
     }
 
@@ -523,34 +518,11 @@ const Game = {
       });
     });
 
-    // Customizer color palettes
-    const setupPalette = (configClass, colorKey) => {
-      const paletteContainer = document.querySelector(`.${configClass} .color-palette`);
-      const indicator = document.querySelector(`.${configClass} .color-indicator`);
-      if (!paletteContainer || !indicator) return;
-      const dots = paletteContainer.querySelectorAll('.color-dot');
-      
-      dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-          dots.forEach(d => d.classList.remove('active'));
-          dot.classList.add('active');
-          const color = dot.getAttribute('data-color');
-          this[colorKey] = color;
-          indicator.style.backgroundColor = color;
-          this.applyPlayerColorVariables();
-        });
-      });
-    };
-
-    setupPalette('p1-config', 'p1Color');
-    setupPalette('p2-config', 'p2Color');
-
     // Start Button
     const startBtn = document.getElementById('start-game-btn');
     if (startBtn) {
       startBtn.addEventListener('click', () => {
         this.sounds.init();
-        // Read names
         const p1Input = document.getElementById('p1-name-input');
         const p2Input = document.getElementById('p2-name-input');
         this.p1Name = p1Input ? p1Input.value.trim() : 'Player 1';
@@ -605,19 +577,27 @@ const Game = {
       });
     }
 
-    // Mute button
-    const muteBtn = document.getElementById('mute-btn');
-    if (muteBtn) {
-      muteBtn.addEventListener('click', () => {
+    // Mute buttons (sync all class elements)
+    const muteButtons = document.querySelectorAll('.mute-btn');
+    muteButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
         this.sounds.toggleMute();
       });
-    }
+    });
 
     // Reset button
     const resetBtn = document.getElementById('reset-game-btn');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
         this.startNewGame();
+      });
+    }
+
+    // Undo button
+    const undoBtn = document.getElementById('undo-btn');
+    if (undoBtn) {
+      undoBtn.addEventListener('click', () => {
+        this.undoLastMove();
       });
     }
 
@@ -662,13 +642,17 @@ const Game = {
   },
 
   launchGame() {
-    // Update display names
-    document.getElementById('p1-name-display').textContent = this.p1Name;
-    document.getElementById('p2-name-display').textContent = this.p2Name;
+    // Update display names if elements exist
+    const p1NameDisp = document.getElementById('p1-name-display');
+    if (p1NameDisp) p1NameDisp.textContent = this.p1Name;
+    const p2NameDisp = document.getElementById('p2-name-display');
+    if (p2NameDisp) p2NameDisp.textContent = this.gameMode === 'ai' ? 'COMPUTER' : 'PLAYER 2';
     
-    // Set avatars initials
-    document.querySelector('.p1-avatar-initial').textContent = this.getInitials(this.p1Name);
-    document.querySelector('.p2-avatar-initial').textContent = this.gameMode === 'ai' ? 'AI' : this.getInitials(this.p2Name);
+    // Set avatars initials if exist
+    const p1Av = document.querySelector('.p1-avatar-initial');
+    if (p1Av) p1Av.textContent = this.getInitials(this.p1Name);
+    const p2Av = document.querySelector('.p2-avatar-initial');
+    if (p2Av) p2Av.textContent = this.gameMode === 'ai' ? 'AI' : this.getInitials(this.p2Name);
 
     this.transitionToScreen('game');
     this.startNewGame();
@@ -686,6 +670,7 @@ const Game = {
     this.currentPlayer = 0;
     this.isGameOver = false;
     this.isAiThinking = false;
+    this.history = []; // Clear move history
 
     // Reset score displays
     document.getElementById('p1-score-display').textContent = '0';
@@ -838,7 +823,7 @@ const Game = {
   },
 
   executeMove(type, r, c) {
-    // Record move
+    // Record move in matrix
     if (type === 'h') {
       this.hLines[r][c] = true;
     } else {
@@ -861,6 +846,17 @@ const Game = {
     // Check box completions
     const boxesCompleted = this.checkBoxCompletion(type, r, c);
 
+    // Record this move to the history stack BEFORE updating scores and turn
+    this.history.push({
+      type: type,
+      r: r,
+      c: c,
+      currentPlayer: this.currentPlayer,
+      p1Score: this.p1Score,
+      p2Score: this.p2Score,
+      boxesCaptured: boxesCompleted.map(b => ({ r: b.row, c: b.col }))
+    });
+
     if (boxesCompleted.length > 0) {
       // Award completed boxes to player
       boxesCompleted.forEach(box => {
@@ -875,7 +871,8 @@ const Game = {
         }
         if (textEl) {
           textEl.classList.add(this.currentPlayer === 0 ? 'p1-text' : 'p2-text');
-          textEl.textContent = this.currentPlayer === 0 ? this.getInitials(this.p1Name) : this.gameMode === 'ai' && this.currentPlayer === 1 ? 'AI' : this.getInitials(this.p2Name);
+          // Display "1" for Player 1, "C" or "2" for Player 2 / Computer
+          textEl.textContent = this.currentPlayer === 0 ? "1" : (this.gameMode === 'ai' ? "C" : "2");
         }
       });
 
@@ -1010,20 +1007,29 @@ const Game = {
     // Toggle active scorecard pulsing border
     const p1Card = document.getElementById('p1-card');
     const p2Card = document.getElementById('p2-card');
+    const turnPill = document.getElementById('turn-indicator-pill');
 
     if (this.currentPlayer === 0) {
-      p1Card.classList.add('active');
-      p2Card.classList.remove('active');
+      if (p1Card) p1Card.classList.add('active');
+      if (p2Card) p2Card.classList.remove('active');
       
-      document.getElementById('game-status-text').textContent = `${this.p1Name}'s turn!`;
+      if (turnPill) {
+        turnPill.textContent = "Player 1's Turn";
+        turnPill.style.backgroundColor = this.p1Color;
+        turnPill.style.boxShadow = `0 4px 12px ${this.p1Color}40`;
+      }
     } else {
-      p2Card.classList.add('active');
-      p1Card.classList.remove('active');
+      if (p2Card) p2Card.classList.add('active');
+      if (p1Card) p1Card.classList.remove('active');
 
-      if (this.gameMode === 'ai') {
-        document.getElementById('game-status-text').textContent = `AI is thinking...`;
-      } else {
-        document.getElementById('game-status-text').textContent = `${this.p2Name}'s turn!`;
+      if (turnPill) {
+        if (this.gameMode === 'ai') {
+          turnPill.textContent = "Computer's Turn";
+        } else {
+          turnPill.textContent = "Player 2's Turn";
+        }
+        turnPill.style.backgroundColor = this.p2Color;
+        turnPill.style.boxShadow = `0 4px 12px ${this.p2Color}40`;
       }
     }
   },
@@ -1520,6 +1526,177 @@ const Game = {
       this.openLeaderboard();
     }
   }
+,
+  setupColorPalettes() {
+    const p1Palette = document.getElementById('p1-color-palette');
+    const p2Palette = document.getElementById('p2-color-palette');
+    if (!p1Palette || !p2Palette) return;
+
+    const p1Dots = p1Palette.querySelectorAll('.color-dot');
+    const p2Dots = p2Palette.querySelectorAll('.color-dot');
+
+    const expandP1Palette = () => {
+      p1Dots.forEach(dot => dot.classList.remove('hidden'));
+      const moreBtn = document.getElementById('p1-more-colors-btn');
+      if (moreBtn) moreBtn.style.display = 'none';
+    };
+
+    const expandP2Palette = () => {
+      p2Dots.forEach(dot => dot.classList.remove('hidden'));
+      const moreBtn = document.getElementById('p2-more-colors-btn');
+      if (moreBtn) moreBtn.style.display = 'none';
+    };
+
+    const selectP1Color = (color) => {
+      this.p1Color = color;
+      p1Dots.forEach(dot => {
+        const dotColor = dot.getAttribute('data-color');
+        if (dotColor === color) {
+          dot.classList.add('active');
+          dot.style.setProperty('--selected-color', color);
+          // If color is hidden, expand the palette
+          if (dot.classList.contains('hidden')) {
+            expandP1Palette();
+          }
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+      
+      // Update selected color preview dot background
+      const preview = document.getElementById('p1-preview-dot');
+      if (preview) preview.style.backgroundColor = color;
+
+      // Prevent overlapping colors
+      if (this.p2Color === color) {
+        const otherColors = ['#3f47e0', '#b91c1c', '#6b7bba', '#f97316'];
+        const alternative = otherColors.find(c => c !== color);
+        selectP2Color(alternative);
+      }
+      this.applyPlayerColorVariables();
+    };
+
+    const selectP2Color = (color) => {
+      this.p2Color = color;
+      p2Dots.forEach(dot => {
+        const dotColor = dot.getAttribute('data-color');
+        if (dotColor === color) {
+          dot.classList.add('active');
+          dot.style.setProperty('--selected-color', color);
+          // If color is hidden, expand the palette
+          if (dot.classList.contains('hidden')) {
+            expandP2Palette();
+          }
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+
+      // Update selected color preview dot background
+      const preview = document.getElementById('p2-preview-dot');
+      if (preview) preview.style.backgroundColor = color;
+
+      // Prevent overlapping colors
+      if (this.p1Color === color) {
+        const otherColors = ['#3f47e0', '#b91c1c', '#6b7bba', '#f97316'];
+        const alternative = otherColors.find(c => c !== color);
+        selectP1Color(alternative);
+      }
+      this.applyPlayerColorVariables();
+    };
+
+    p1Dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        selectP1Color(dot.getAttribute('data-color'));
+      });
+    });
+
+    p2Dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        selectP2Color(dot.getAttribute('data-color'));
+      });
+    });
+
+    // Expand click listeners
+    const p1More = document.getElementById('p1-more-colors-btn');
+    if (p1More) {
+      p1More.addEventListener('click', (e) => {
+        e.stopPropagation();
+        expandP1Palette();
+      });
+    }
+
+    const p2More = document.getElementById('p2-more-colors-btn');
+    if (p2More) {
+      p2More.addEventListener('click', (e) => {
+        e.stopPropagation();
+        expandP2Palette();
+      });
+    }
+
+    // Initial setup
+    selectP1Color(this.p1Color);
+    selectP2Color(this.p2Color);
+  },
+
+  undoLastMove() {
+    if (this.isGameOver || this.isAiThinking || !this.history || this.history.length === 0) return;
+
+    const undoSingleMove = () => {
+      const lastMove = this.history.pop();
+      if (!lastMove) return null;
+
+      // Revert grid line state
+      if (lastMove.type === 'h') {
+        this.hLines[lastMove.r][lastMove.c] = false;
+      } else {
+        this.vLines[lastMove.r][lastMove.c] = false;
+      }
+
+      // Revert SVG visual line styling
+      const lineEl = document.getElementById(`line-${lastMove.type}-${lastMove.r}-${lastMove.c}`);
+      if (lineEl) {
+        lineEl.classList.remove('p1-move', 'p2-move');
+        lineEl.classList.add('unclicked');
+      }
+
+      // Revert boxes captured in this move
+      lastMove.boxesCaptured.forEach(box => {
+        this.boxes[box.r][box.c] = null;
+        const rectEl = document.getElementById(`box-${box.r}-${box.c}`);
+        const textEl = document.getElementById(`box-text-${box.r}-${box.c}`);
+        if (rectEl) {
+          rectEl.classList.remove('p1-captured', 'p2-captured');
+        }
+        if (textEl) {
+          textEl.classList.remove('p1-text', 'p2-text');
+          textEl.textContent = '';
+        }
+      });
+
+      // Revert scores
+      this.p1Score = lastMove.p1Score;
+      this.p2Score = lastMove.p2Score;
+
+      // Revert current player
+      this.currentPlayer = lastMove.currentPlayer;
+
+      return lastMove;
+    };
+
+    if (this.gameMode === 'ai') {
+      // In AI mode, undo the computer's moves first, then the player's move
+      let undoneMove = null;
+      do {
+        undoneMove = undoSingleMove();
+      } while (undoneMove && undoneMove.currentPlayer !== 0 && this.history.length > 0);
+    } else {
+      // PVP mode: just undo one move
+      undoSingleMove();
+    }
+
+    this.updateUI();
+  },
 };
 
 // Initialize App on DOM Content Loaded
