@@ -63,6 +63,7 @@ html {
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
+  background-color: var(--bg-primary);
 }
 
 /* Background Blurs for Visual Depth */
@@ -581,6 +582,7 @@ html {
   stroke: var(--line-unselected);
   stroke-linecap: round;
   transition: stroke 0.25s, stroke-width 0.25s;
+  pointer-events: none;
 }
 
 .board-line.p1-move {
@@ -1725,4 +1727,75 @@ html {
 .color-more-btn:hover {
   background: #cbd5e1;
   transform: scale(1.1);
+}
+
+/* ==========================================================================
+   Screen Transition Loader
+   ========================================================================== */
+.screen-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.screen-loader.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.loader-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.loader-dot {
+  width: 12px;
+  height: 12px;
+  background-color: #3f47e0;
+  border-radius: 50%;
+  animation: loaderPulse 1.2s infinite ease-in-out;
+}
+
+.loader-dot:nth-child(1) { animation-delay: 0s; }
+.loader-dot:nth-child(2) { animation-delay: 0.15s; }
+.loader-dot:nth-child(3) { animation-delay: 0.3s; }
+.loader-dot:nth-child(4) { animation-delay: 0.45s; }
+
+@keyframes loaderPulse {
+  0%, 100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+    background-color: var(--p2-color, #f43f5e);
+    box-shadow: 0 0 12px var(--p2-color, #f43f5e);
+  }
+}
+
+.loader-text {
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }

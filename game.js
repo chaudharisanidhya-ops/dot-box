@@ -624,21 +624,43 @@ const Game = {
   },
 
   transitionToScreen(screenName) {
-    if (screenName === 'menu') {
-      this.screens.game.classList.remove('active');
-      setTimeout(() => {
+    const loader = document.getElementById('screen-loader');
+    if (!loader) {
+      if (screenName === 'menu') {
+        this.screens.game.classList.remove('active');
         this.screens.game.style.display = 'none';
         this.screens.menu.style.display = 'flex';
-        setTimeout(() => this.screens.menu.classList.add('active'), 20);
-      }, 300);
-    } else {
-      this.screens.menu.classList.remove('active');
-      setTimeout(() => {
+        this.screens.menu.classList.add('active');
+      } else {
+        this.screens.menu.classList.remove('active');
         this.screens.menu.style.display = 'none';
         this.screens.game.style.display = 'flex';
-        setTimeout(() => this.screens.game.classList.add('active'), 20);
-      }, 300);
+        this.screens.game.classList.add('active');
+      }
+      return;
     }
+
+    // Activate Loader
+    loader.classList.add('active');
+
+    setTimeout(() => {
+      if (screenName === 'menu') {
+        this.screens.game.classList.remove('active');
+        this.screens.game.style.display = 'none';
+        this.screens.menu.style.display = 'flex';
+        this.screens.menu.classList.add('active');
+      } else {
+        this.screens.menu.classList.remove('active');
+        this.screens.menu.style.display = 'none';
+        this.screens.game.style.display = 'flex';
+        this.screens.game.classList.add('active');
+      }
+      
+      // Deactivate Loader after a short visual delay to let layout repaint
+      setTimeout(() => {
+        loader.classList.remove('active');
+      }, 250);
+    }, 450);
   },
 
   launchGame() {
@@ -778,8 +800,8 @@ const Game = {
         }
       });
 
-      svg.appendChild(visualLine);
       svg.appendChild(hitbox);
+      svg.appendChild(visualLine);
     };
 
     // 2. Render horizontal lines
