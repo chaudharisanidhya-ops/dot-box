@@ -1339,7 +1339,6 @@ const Game = {
     // Display modal
     setTimeout(() => {
       modal.classList.add('active');
-      this.particles.start(animType);
     }, 600);
   },
 

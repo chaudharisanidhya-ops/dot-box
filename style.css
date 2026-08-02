@@ -383,6 +383,33 @@ html {
   transform: translateY(1px);
 }
 
+.secondary-btn {
+  background: rgba(15, 23, 42, 0.05);
+  color: #64748b;
+  border: none;
+  width: 100%;
+  font-family: var(--font-family);
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 14px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.secondary-btn:hover {
+  background: rgba(15, 23, 42, 0.08);
+  color: #3f47e0;
+  transform: translateY(-2px);
+}
+
+.secondary-btn:active {
+  transform: translateY(1px);
+}
+
 /* ==========================================================================
    Game Screen Layout & Controls (Image 1 style)
    ========================================================================== */
