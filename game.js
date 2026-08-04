@@ -1761,12 +1761,8 @@ const Game = {
   initSocket() {
     if (this.socket) return;
     
-    // Connect directly to the server. If in dev mode (Vite on port 5173), we connect to port 3000.
-    const socketUrl = window.location.port === '5173'
-      ? `${window.location.protocol}//${window.location.hostname}:3000`
-      : undefined;
-    
-    this.socket = io(socketUrl);
+    // Connect to same origin. Vite proxies dev traffic to Node port 3000.
+    this.socket = io();
     this.setupSocketListeners();
   },
 
