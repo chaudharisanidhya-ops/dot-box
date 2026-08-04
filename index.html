@@ -40,9 +40,7 @@
             <button data-mode="pvp" id="btn-mode-pvp">
               <span>Pass & Play</span>
             </button>
-            <button data-mode="online" id="btn-mode-online">
-              <span>Play Online</span>
-            </button>
+
           </div>
         </div>
 
@@ -75,23 +73,7 @@
           </div>
         </div>
 
-        <!-- Online Multiplayer Options (Hidden by default) -->
-        <div class="form-group hidden" id="online-options-group">
-          <div class="submode-panel">
-            <p class="online-panel-desc">Create a private game code or enter a code to join your friend.</p>
-            <div class="friend-actions-row">
-              <button type="button" id="create-room-btn" class="secondary-btn online-action-btn-sec">
-                <span>Create Room</span>
-              </button>
-              <div class="join-input-group">
-                <input type="text" id="join-room-input" placeholder="CODE" maxlength="6">
-                <button type="button" id="join-room-btn" class="primary-btn join-room-btn">
-                  <span>Join</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         <!-- Players Customization Layout -->
         <div class="form-group">
@@ -278,55 +260,7 @@
     </div>
   </div>
 
-  <!-- ONLINE LOBBY OVERLAY MODAL -->
-  <div id="online-lobby-modal" class="modal-overlay">
-    <div class="modal-card lobby-card">
-      <div class="modal-header">
-        <h2>Game Lobby</h2>
-        <button id="lobby-cancel-btn" class="close-btn" aria-label="Cancel Lobby">&times;</button>
-      </div>
-      <p class="lobby-subtitle" id="lobby-status-text">Setting up room...</p>
-      
-      <div class="lobby-content-wrapper">
-        <div class="lobby-animation-container">
-          <div class="lobby-pulse-ring"></div>
-          <div class="lobby-pulse-ring-inner"></div>
-          <div class="lobby-avatar-preview">🎲</div>
-        </div>
 
-        <!-- Room Code block -->
-        <div class="lobby-code-box hidden" id="lobby-code-box">
-          <span class="lobby-code-label">SHARE ROOM CODE</span>
-          <div class="lobby-code-row">
-            <span class="lobby-code-val" id="lobby-code-display">------</span>
-            <button id="copy-code-btn" class="copy-btn-icon" title="Copy Code">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="lobby-players-status">
-          <div class="lobby-player-row active" id="lobby-p1-row">
-            <div class="lobby-player-avatar" id="lobby-p1-dot" style="background-color: var(--p1-color)">1</div>
-            <span class="lobby-player-name" id="lobby-p1-name">Player 1</span>
-            <span class="lobby-player-tag tag-ready">Ready</span>
-          </div>
-          <div class="lobby-player-row" id="lobby-p2-row">
-            <div class="lobby-player-avatar" id="lobby-p2-dot">2</div>
-            <span class="lobby-player-name" id="lobby-p2-name">Waiting for opponent...</span>
-            <span class="lobby-player-tag tag-waiting" id="lobby-p2-tag">Waiting</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="lobby-footer">
-        <button id="lobby-leave-btn" class="secondary-btn">Cancel Lobby</button>
-      </div>
-    </div>
-  </div>
 
   <!-- Premium Loading / Transition Overlay -->
   <div id="screen-loader" class="screen-loader">
@@ -342,7 +276,7 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/socket.io/socket.io.js"></script>
+
   <script src="game.js"></script>
 </body>
 </html>

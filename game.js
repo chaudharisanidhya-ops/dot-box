@@ -369,14 +369,6 @@ const Game = {
   p2Color: '#b91c1c',
   history: [],
   
-  // Online Multiplayer State
-  socket: null,
-  isOnline: false,
-  onlineRoomId: null,
-  onlinePlayerIndex: null, // 0 = local, 1 = remote
-  isMatchmaking: false,
-  rematchRequested: false,
-
   // Dynamic scores & Turn
   p1Score: 0,
   p2Score: 0,
@@ -472,9 +464,7 @@ const Game = {
     // Game Mode segment controllers
     const btnModeAi = document.getElementById('btn-mode-ai');
     const btnModePvp = document.getElementById('btn-mode-pvp');
-    const btnModeOnline = document.getElementById('btn-mode-online');
     const diffGroup = document.getElementById('difficulty-group');
-    const onlineOptionsGroup = document.getElementById('online-options-group');
     const p2CustomizeCard = document.getElementById('p2-customize-card');
     const startGameBtn = document.getElementById('start-game-btn');
 
@@ -482,14 +472,13 @@ const Game = {
       this.gameMode = mode;
       
       // Update UI button active states
-      [btnModeAi, btnModePvp, btnModeOnline].forEach(btn => {
+      [btnModeAi, btnModePvp].forEach(btn => {
         if (btn) btn.classList.remove('active');
       });
 
       if (mode === 'ai') {
         if (btnModeAi) btnModeAi.classList.add('active');
         if (diffGroup) diffGroup.classList.remove('hidden');
-        if (onlineOptionsGroup) onlineOptionsGroup.classList.add('hidden');
         if (p2CustomizeCard) p2CustomizeCard.classList.remove('hidden');
         if (startGameBtn) startGameBtn.style.display = 'block';
         this.p2Name = 'Computer';
@@ -503,7 +492,6 @@ const Game = {
       } else if (mode === 'pvp') {
         if (btnModePvp) btnModePvp.classList.add('active');
         if (diffGroup) diffGroup.classList.add('hidden');
-        if (onlineOptionsGroup) onlineOptionsGroup.classList.add('hidden');
         if (p2CustomizeCard) p2CustomizeCard.classList.remove('hidden');
         if (startGameBtn) startGameBtn.style.display = 'block';
         this.p2Name = 'Player 2';
@@ -514,12 +502,7 @@ const Game = {
         if (nameLabel) nameLabel.textContent = 'Player 2 Name';
         const nameInput = document.getElementById('p2-name-input');
         if (nameInput) nameInput.value = 'Player 2';
-      } else if (mode === 'online') {
-        if (btnModeOnline) btnModeOnline.classList.add('active');
-        if (diffGroup) diffGroup.classList.add('hidden');
-        if (onlineOptionsGroup) onlineOptionsGroup.classList.remove('hidden');
-        if (p2CustomizeCard) p2CustomizeCard.classList.add('hidden');
-        if (startGameBtn) startGameBtn.style.display = 'none';
+
       }
     };
 
@@ -529,30 +512,6 @@ const Game = {
     if (btnModePvp) {
       btnModePvp.addEventListener('click', () => selectMode('pvp'));
     }
-    if (btnModeOnline) {
-      btnModeOnline.addEventListener('click', () => selectMode('online'));
-    }
-
-    // Create and Join room event listeners
-
-    const createRoomBtn = document.getElementById('create-room-btn');
-    if (createRoomBtn) {
-      createRoomBtn.addEventListener('click', () => {
-        this.createOnlineFriendRoom();
-      });
-    }
-
-    const joinRoomBtn = document.getElementById('join-room-btn');
-    if (joinRoomBtn) {
-      joinRoomBtn.addEventListener('click', () => {
-        this.joinOnlineFriendRoom();
-      });
-    }
-
-    // Lobby leave/cancel
-    const lobbyCancelBtn = document.getElementById('lobby-cancel-btn');
-    if (lobbyCancelBtn) {
-      lobbyCancelBtn.addEventListener('click', () => this.leaveOnlineLobby());
     }
     const lobbyLeaveBtn = document.getElementById('lobby-leave-btn');
     if (lobbyLeaveBtn) {
@@ -634,7 +593,6 @@ const Game = {
     const backMenuBtn = document.getElementById('back-to-menu-btn');
     if (backMenuBtn) {
       backMenuBtn.addEventListener('click', () => {
-        this.resetOnlineState();
         this.transitionToScreen('menu');
       });
     }
@@ -651,9 +609,7 @@ const Game = {
     const resetBtn = document.getElementById('reset-game-btn');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        if (!this.isOnline) {
-          this.startNewGame();
-        }
+        this.startNewGame();
       });
     }
 
@@ -661,9 +617,7 @@ const Game = {
     const undoBtn = document.getElementById('undo-btn');
     if (undoBtn) {
       undoBtn.addEventListener('click', () => {
-        if (!this.isOnline) {
-          this.undoLastMove();
-        }
+        this.undoLastMove();
       });
     }
 
@@ -671,19 +625,10 @@ const Game = {
     const replayBtn = document.getElementById('modal-replay-btn');
     if (replayBtn) {
       replayBtn.addEventListener('click', () => {
-        if (this.isOnline) {
-          if (this.socket && this.onlineRoomId) {
-            this.socket.emit('rematch_request', { roomId: this.onlineRoomId });
-            replayBtn.textContent = 'Waiting for Opponent...';
-            replayBtn.disabled = true;
-            this.rematchRequested = true;
-          }
-        } else {
-          const modal = document.getElementById('game-over-modal');
-          if (modal) modal.classList.remove('active');
-          this.particles.stop();
-          this.startNewGame();
-        }
+        const modal = document.getElementById('game-over-modal');
+        if (modal) modal.classList.remove('active');
+        this.particles.stop();
+        this.startNewGame();
       });
     }
 
@@ -693,7 +638,6 @@ const Game = {
         const modal = document.getElementById('game-over-modal');
         if (modal) modal.classList.remove('active');
         this.particles.stop();
-        this.resetOnlineState();
         this.transitionToScreen('menu');
       });
     }
@@ -857,11 +801,7 @@ const Game = {
         // Only show hover if line is not already placed
         const linePlaced = type === 'h' ? this.hLines[r][c] : this.vLines[r][c];
         if (!linePlaced) {
-          if (this.isOnline && this.currentPlayer !== this.onlinePlayerIndex) {
-            return;
-          }
-          const activeLocalPlayer = this.getLocalIndex(this.currentPlayer);
-          hitbox.classList.add(activeLocalPlayer === 0 ? 'p1-hover' : 'p2-hover');
+          hitbox.classList.add(this.currentPlayer === 0 ? 'p1-hover' : 'p2-hover');
         }
       });
 
@@ -875,25 +815,8 @@ const Game = {
         const linePlaced = type === 'h' ? this.hLines[r][c] : this.vLines[r][c];
         if (linePlaced) return;
 
-        if (this.isOnline) {
-          // Only allow placing moves on player's own turn
-          if (this.currentPlayer !== this.onlinePlayerIndex) {
-            return;
-          }
-          
-          hitbox.classList.remove('p1-hover', 'p2-hover');
-          if (this.socket && this.onlineRoomId) {
-            this.socket.emit('make_move', {
-              roomId: this.onlineRoomId,
-              type: type,
-              r: r,
-              c: c
-            });
-          }
-        } else {
-          hitbox.classList.remove('p1-hover', 'p2-hover');
-          this.executeMove(type, r, c);
-        }
+        hitbox.classList.remove('p1-hover', 'p2-hover');
+        this.executeMove(type, r, c);
       });
 
       svg.appendChild(hitbox);
@@ -1127,9 +1050,7 @@ const Game = {
     const p2Card = document.getElementById('p2-card');
     const turnPill = document.getElementById('turn-indicator-pill');
 
-    const activeLocalPlayer = this.getLocalIndex(this.currentPlayer);
-
-    if (activeLocalPlayer === 0) {
+    if (this.currentPlayer === 0) {
       if (p1Card) p1Card.classList.add('active');
       if (p2Card) p2Card.classList.remove('active');
       
@@ -1758,473 +1679,7 @@ const Game = {
     selectP2Color(this.p2Color);
   },
 
-  initSocket() {
-    if (this.socket) return;
-    
-    // Connect to same origin. Vite proxies dev traffic to Node port 3000.
-    this.socket = io();
-    this.setupSocketListeners();
-  },
 
-  setupSocketListeners() {
-    if (!this.socket) return;
-
-    this.socket.on('room_created', (data) => {
-      this.onlineRoomId = data.roomId;
-      this.onlinePlayerIndex = data.playerIndex;
-      
-      const statusText = document.getElementById('lobby-status-text');
-      if (statusText) statusText.textContent = 'Waiting for Player 2 to join...';
-      
-      const leaveBtn = document.getElementById('lobby-leave-btn');
-      if (leaveBtn) leaveBtn.textContent = 'Cancel Lobby';
-
-      const codeBox = document.getElementById('lobby-code-box');
-      const codeDisplay = document.getElementById('lobby-code-display');
-      if (codeBox && codeDisplay) {
-        codeDisplay.textContent = data.roomId;
-        codeBox.classList.remove('hidden');
-      }
-
-      // Clipboard copy setup
-      const copyBtn = document.getElementById('copy-code-btn');
-      if (copyBtn) {
-        // Remove previous listeners
-        const newCopyBtn = copyBtn.cloneNode(true);
-        copyBtn.parentNode.replaceChild(newCopyBtn, copyBtn);
-        newCopyBtn.addEventListener('click', () => {
-          navigator.clipboard.writeText(data.roomId).then(() => {
-            const originalTitle = newCopyBtn.title;
-            newCopyBtn.title = 'Copied!';
-            newCopyBtn.style.background = '#10b981';
-            newCopyBtn.style.borderColor = '#10b981';
-            newCopyBtn.style.color = '#ffffff';
-            setTimeout(() => {
-              newCopyBtn.title = originalTitle;
-              newCopyBtn.style.background = 'white';
-              newCopyBtn.style.borderColor = '#e2e8f0';
-              newCopyBtn.style.color = '#64748b';
-            }, 1500);
-          }).catch(err => {
-            console.error('Failed to copy text: ', err);
-          });
-        });
-      }
-
-      // Update lobby player cards
-      const p1Name = document.getElementById('lobby-p1-name');
-      const p1Dot = document.getElementById('lobby-p1-dot');
-      if (p1Name) p1Name.textContent = data.players[0].name;
-      if (p1Dot) p1Dot.style.backgroundColor = data.players[0].color;
-
-      const p2Name = document.getElementById('lobby-p2-name');
-      const p2Tag = document.getElementById('lobby-p2-tag');
-      const p2Dot = document.getElementById('lobby-p2-dot');
-      if (p2Name) p2Name.textContent = 'Waiting for opponent...';
-      if (p2Dot) p2Dot.style.backgroundColor = '#cbd5e1';
-      if (p2Tag) {
-        p2Tag.textContent = 'Waiting';
-        p2Tag.className = 'lobby-player-tag tag-waiting';
-      }
-    });
-
-    this.socket.on('room_joined', (data) => {
-      this.onlineRoomId = data.roomId;
-      this.onlinePlayerIndex = data.playerIndex;
-      
-      const statusText = document.getElementById('lobby-status-text');
-      if (statusText) statusText.textContent = 'Joined room! Preparing game...';
-
-      const leaveBtn = document.getElementById('lobby-leave-btn');
-      if (leaveBtn) leaveBtn.textContent = 'Leave Lobby';
-
-      const codeBox = document.getElementById('lobby-code-box');
-      const codeDisplay = document.getElementById('lobby-code-display');
-      if (codeBox && codeDisplay) {
-        codeDisplay.textContent = data.roomId;
-        codeBox.classList.remove('hidden');
-      }
-
-      // Update player card details
-      const p1Name = document.getElementById('lobby-p1-name');
-      const p1Dot = document.getElementById('lobby-p1-dot');
-      if (p1Name) p1Name.textContent = data.players[0].name;
-      if (p1Dot) p1Dot.style.backgroundColor = data.players[0].color;
-
-      const p2Name = document.getElementById('lobby-p2-name');
-      const p2Tag = document.getElementById('lobby-p2-tag');
-      const p2Dot = document.getElementById('lobby-p2-dot');
-      if (p2Name) p2Name.textContent = data.players[1].name;
-      if (p2Dot) p2Dot.style.backgroundColor = data.players[1].color;
-      if (p2Tag) {
-        p2Tag.textContent = 'Ready';
-        p2Tag.className = 'lobby-player-tag tag-ready';
-      }
-    });
-
-    this.socket.on('game_start', (data) => {
-      // Close lobby modal
-      const lobbyModal = document.getElementById('online-lobby-modal');
-      if (lobbyModal) lobbyModal.classList.remove('active');
-
-      this.isOnline = true;
-      this.onlineRoomId = data.roomId;
-
-      // Extract client details
-      const localPlayer = data.players[this.onlinePlayerIndex];
-      const remotePlayer = data.players[1 - this.onlinePlayerIndex];
-
-      // Update color settings
-      this.p1Name = localPlayer.name;
-      this.p1Color = localPlayer.color;
-      this.p2Name = remotePlayer.name;
-      this.p2Color = remotePlayer.color;
-
-      this.applyPlayerColorVariables();
-
-      // Launch screen
-      this.launchOnlineGame(data.gridSize, data.currentPlayer, data.scores);
-    });
-
-    this.socket.on('move_made', (data) => {
-      this.executeOnlineMove(data);
-    });
-
-    this.socket.on('rematch_requested', (data) => {
-      const winnerSubtitle = document.getElementById('winner-subtitle');
-      if (winnerSubtitle) {
-        winnerSubtitle.textContent = 'Opponent requested a rematch! Click Play Again to accept.';
-        winnerSubtitle.style.color = '#3f47e0';
-        winnerSubtitle.style.fontWeight = 'bold';
-      }
-    });
-
-    this.socket.on('opponent_disconnected', (data) => {
-      this.handleOpponentDisconnect(data.msg);
-    });
-
-    this.socket.on('error_message', (msg) => {
-      alert(msg);
-      this.leaveOnlineLobby();
-    });
-
-    this.socket.on('connect_error', () => {
-      alert('Could not connect to the multiplayer server. Make sure it is running.');
-      this.leaveOnlineLobby();
-    });
-  },
-
-  getLocalIndex(absoluteIndex) {
-    if (this.isOnline) {
-      return absoluteIndex === this.onlinePlayerIndex ? 0 : 1;
-    }
-    return absoluteIndex;
-  },
-
-  createOnlineFriendRoom() {
-    this.sounds.init();
-    const p1Input = document.getElementById('p1-name-input');
-    this.p1Name = p1Input ? p1Input.value.trim() : 'Player 1';
-    if (!this.p1Name) this.p1Name = 'Player 1';
-
-    this.isMatchmaking = false;
-    this.initSocket();
-
-    // Show lobby modal in create state
-    const lobbyModal = document.getElementById('online-lobby-modal');
-    const statusText = document.getElementById('lobby-status-text');
-    const codeBox = document.getElementById('lobby-code-box');
-    const leaveBtn = document.getElementById('lobby-leave-btn');
-
-    if (codeBox) codeBox.classList.add('hidden');
-    if (statusText) statusText.textContent = 'Generating room code...';
-    if (leaveBtn) leaveBtn.textContent = 'Cancel Lobby';
-
-    const p1Name = document.getElementById('lobby-p1-name');
-    const p1Dot = document.getElementById('lobby-p1-dot');
-    if (p1Name) p1Name.textContent = this.p1Name;
-    if (p1Dot) p1Dot.style.backgroundColor = this.p1Color;
-
-    const p2Name = document.getElementById('lobby-p2-name');
-    const p2Tag = document.getElementById('lobby-p2-tag');
-    const p2Dot = document.getElementById('lobby-p2-dot');
-    if (p2Name) p2Name.textContent = 'Waiting for friend...';
-    if (p2Dot) p2Dot.style.backgroundColor = '#cbd5e1';
-    if (p2Tag) {
-      p2Tag.textContent = 'Waiting';
-      p2Tag.className = 'lobby-player-tag tag-waiting';
-    }
-
-    if (lobbyModal) lobbyModal.classList.add('active');
-
-    this.socket.emit('create_room', {
-      name: this.p1Name,
-      color: this.p1Color,
-      gridSize: this.gridSize
-    });
-  },
-
-  joinOnlineFriendRoom() {
-    const inputEl = document.getElementById('join-room-input');
-    const code = inputEl ? inputEl.value.trim().toUpperCase() : '';
-    
-    if (!code || code.length !== 6) {
-      alert('Please enter a valid 6-character room code.');
-      return;
-    }
-
-    this.sounds.init();
-    const p1Input = document.getElementById('p1-name-input');
-    this.p1Name = p1Input ? p1Input.value.trim() : 'Player 1';
-    if (!this.p1Name) this.p1Name = 'Player 1';
-
-    this.isMatchmaking = false;
-    this.initSocket();
-
-    // Show lobby modal in join waiting state
-    const lobbyModal = document.getElementById('online-lobby-modal');
-    const statusText = document.getElementById('lobby-status-text');
-    const codeBox = document.getElementById('lobby-code-box');
-    const leaveBtn = document.getElementById('lobby-leave-btn');
-
-    if (codeBox) {
-      codeBox.classList.remove('hidden');
-      const codeDisplay = document.getElementById('lobby-code-display');
-      if (codeDisplay) codeDisplay.textContent = code;
-    }
-    if (statusText) statusText.textContent = 'Connecting to lobby...';
-    if (leaveBtn) leaveBtn.textContent = 'Cancel Connection';
-
-    const p1Name = document.getElementById('lobby-p1-name');
-    const p1Dot = document.getElementById('lobby-p1-dot');
-    if (p1Name) p1Name.textContent = 'Connecting...';
-    if (p1Dot) p1Dot.style.backgroundColor = '#cbd5e1';
-
-    const p2Name = document.getElementById('lobby-p2-name');
-    const p2Tag = document.getElementById('lobby-p2-tag');
-    const p2Dot = document.getElementById('lobby-p2-dot');
-    if (p2Name) p2Name.textContent = this.p1Name;
-    if (p2Dot) p2Dot.style.backgroundColor = this.p1Color;
-    if (p2Tag) {
-      p2Tag.textContent = 'Ready';
-      p2Tag.className = 'lobby-player-tag tag-ready';
-    }
-
-    if (lobbyModal) lobbyModal.classList.add('active');
-
-    this.socket.emit('join_room', {
-      roomId: code,
-      name: this.p1Name,
-      color: this.p1Color
-    });
-  },
-
-  leaveOnlineLobby() {
-    if (this.socket) {
-      if (this.isMatchmaking) {
-        this.socket.emit('leave_queue');
-      }
-      this.socket.disconnect();
-      this.socket = null;
-    }
-    
-    const lobbyModal = document.getElementById('online-lobby-modal');
-    if (lobbyModal) lobbyModal.classList.remove('active');
-    this.isMatchmaking = false;
-    this.isOnline = false;
-    this.onlineRoomId = null;
-  },
-
-  resetOnlineState() {
-    if (this.socket) {
-      this.socket.disconnect();
-      this.socket = null;
-    }
-    this.isOnline = false;
-    this.onlineRoomId = null;
-    this.onlinePlayerIndex = null;
-    this.rematchRequested = false;
-
-    // Reset replay button state
-    const replayBtn = document.getElementById('modal-replay-btn');
-    if (replayBtn) {
-      replayBtn.textContent = 'Play Again';
-      replayBtn.disabled = false;
-      replayBtn.style.display = 'block';
-    }
-
-    // Re-enable Undo and Reset buttons in dock
-    const undoBtn = document.getElementById('undo-btn');
-    if (undoBtn) undoBtn.style.display = 'flex';
-    const resetBtn = document.getElementById('reset-game-btn');
-    if (resetBtn) resetBtn.style.display = 'flex';
-  },
-
-  launchOnlineGame(gridSize, currentPlayer, scores) {
-    this.gridSize = gridSize;
-    
-    // Update labels in game screen
-    const p1NameDisp = document.getElementById('p1-name-display');
-    if (p1NameDisp) p1NameDisp.textContent = this.p1Name;
-    const p2NameDisp = document.getElementById('p2-name-display');
-    if (p2NameDisp) p2NameDisp.textContent = this.p2Name;
-
-    const p1Av = document.querySelector('.p1-avatar-initial');
-    if (p1Av) p1Av.textContent = this.getInitials(this.p1Name);
-    const p2Av = document.querySelector('.p2-avatar-initial');
-    if (p2Av) p2Av.textContent = this.getInitials(this.p2Name);
-
-    this.transitionToScreen('game');
-
-    // Reset state variables
-    if (this.onlinePlayerIndex === 0) {
-      this.p1Score = scores[0];
-      this.p2Score = scores[1];
-    } else {
-      this.p1Score = scores[1];
-      this.p2Score = scores[0];
-    }
-    this.currentPlayer = currentPlayer;
-    this.isGameOver = false;
-    this.isAiThinking = false;
-    this.history = []; // Clear local move undo stack
-
-    // Score counters
-    document.getElementById('p1-score-display').textContent = this.p1Score;
-    document.getElementById('p2-score-display').textContent = this.p2Score;
-
-    // Clear board structures
-    this.hLines = Array(this.gridSize + 1).fill().map(() => Array(this.gridSize).fill(false));
-    this.vLines = Array(this.gridSize).fill().map(() => Array(this.gridSize + 1).fill(false));
-    this.boxes = Array(this.gridSize).fill().map(() => Array(this.gridSize).fill(null));
-
-    // Render board
-    this.generateBoardSVG();
-
-    // Reset rematch requested flag
-    this.rematchRequested = false;
-    const replayBtn = document.getElementById('modal-replay-btn');
-    if (replayBtn) {
-      replayBtn.textContent = 'Play Again';
-      replayBtn.disabled = false;
-      replayBtn.style.display = 'block';
-    }
-
-    // Hide Undo and Reset buttons in bottom dock during online game
-    const undoBtn = document.getElementById('undo-btn');
-    if (undoBtn) undoBtn.style.display = 'none';
-    const resetBtn = document.getElementById('reset-game-btn');
-    if (resetBtn) resetBtn.style.display = 'none';
-
-    this.updateOnlineUI();
-  },
-
-  updateOnlineUI() {
-    this.updateUI();
-    
-    // Enhance turn indicator to specify if it is "Your Turn" vs "Opponent's Turn"
-    const turnPill = document.getElementById('turn-indicator-pill');
-    if (turnPill) {
-      const activeLocalPlayer = this.getLocalIndex(this.currentPlayer);
-      if (activeLocalPlayer === 0) {
-        turnPill.textContent = "Your Turn";
-        turnPill.style.backgroundColor = this.p1Color;
-        turnPill.style.boxShadow = `0 4px 12px ${this.p1Color}40`;
-      } else {
-        turnPill.textContent = "Opponent's Turn";
-        turnPill.style.backgroundColor = this.p2Color;
-        turnPill.style.boxShadow = `0 4px 12px ${this.p2Color}40`;
-      }
-    }
-  },
-
-  executeOnlineMove(data) {
-    const { type, r, c, currentPlayer: nextPlayer, scores, isGameOver, boxesCaptured } = data;
-    
-    // Draw line
-    if (type === 'h') {
-      this.hLines[r][c] = true;
-    } else {
-      this.vLines[r][c] = true;
-    }
-
-    // Determine mover index
-    const absoluteMover = boxesCaptured.length > 0 ? nextPlayer : (1 - nextPlayer);
-    const localMover = this.getLocalIndex(absoluteMover);
-
-    // Style the clicked line
-    const lineEl = document.getElementById(`line-${type}-${r}-${c}`);
-    if (lineEl) {
-      lineEl.classList.remove('unclicked');
-      lineEl.classList.add(localMover === 0 ? 'p1-move' : 'p2-move');
-    }
-
-    this.sounds.playLine();
-    this.animateDotsForLine(type, r, c);
-
-    if (boxesCaptured.length > 0) {
-      boxesCaptured.forEach(box => {
-        this.boxes[box.r][box.c] = localMover;
-        const rectEl = document.getElementById(`box-${box.r}-${box.c}`);
-        const textEl = document.getElementById(`box-text-${box.r}-${box.c}`);
-        if (rectEl) {
-          rectEl.classList.add(localMover === 0 ? 'p1-captured' : 'p2-captured');
-        }
-        if (textEl) {
-          textEl.classList.add(localMover === 0 ? 'p1-text' : 'p2-text');
-          textEl.textContent = localMover === 0 ? "1" : "2";
-        }
-      });
-      
-      if (localMover === 0) {
-        this.pulseScoreElement('p1-score-display');
-      } else {
-        this.pulseScoreElement('p2-score-display');
-      }
-      this.sounds.playBox();
-    }
-
-    if (this.onlinePlayerIndex === 0) {
-      this.p1Score = scores[0];
-      this.p2Score = scores[1];
-    } else {
-      this.p1Score = scores[1];
-      this.p2Score = scores[0];
-    }
-    this.currentPlayer = nextPlayer;
-    this.updateOnlineUI();
-
-    if (isGameOver) {
-      this.endGame();
-    }
-  },
-
-  handleOpponentDisconnect(msg) {
-    if (this.isGameOver) return;
-    this.isGameOver = true;
-    
-    const modal = document.getElementById('game-over-modal');
-    const title = document.getElementById('winner-title');
-    const subtitle = document.getElementById('winner-subtitle');
-    const replayBtn = document.getElementById('modal-replay-btn');
-    
-    if (title) title.textContent = "Match Terminated";
-    if (subtitle) subtitle.textContent = msg || "Opponent disconnected. You win by default!";
-    
-    // Hide replay button (since opponent is gone)
-    if (replayBtn) replayBtn.style.display = 'none';
-
-    // Show scores
-    document.getElementById('summary-p1-score').textContent = this.p1Score;
-    document.getElementById('summary-p2-score').textContent = this.p2Score;
-    document.getElementById('summary-p1-name').textContent = this.p1Name;
-    document.getElementById('summary-p2-name').textContent = this.p2Name;
-    
-    modal.classList.add('active');
-    
-    // Reset connection
-    this.resetOnlineState();
-  },
 
   undoLastMove() {
     if (this.isGameOver || this.isAiThinking || !this.history || this.history.length === 0) return;
