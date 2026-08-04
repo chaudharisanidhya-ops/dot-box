@@ -3,6 +3,15 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "dev": "npx vite"
+    "dev": "concurrently \"npx vite\" \"node server.js\"",
+    "start": "node server.js",
+    "build": "npx vite build"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }
