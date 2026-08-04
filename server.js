@@ -26,7 +26,6 @@ if (process.env.NODE_ENV === 'production') {
 
 // In-memory state
 const rooms = new Map(); // roomId -> roomState
-const matchmakingQueue = []; // Array of socket items: { id, name, color }
 
 // Helper to generate a unique 6-character room code
 function generateRoomCode() {
@@ -104,73 +103,7 @@ function isBoardComplete(room) {
 io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);
 
-  // Handle Matchmaking Join
-  socket.on('join_queue', ({ name, color }) => {
-    // Remove if already in queue
-    const existingIndex = matchmakingQueue.findIndex(p => p.id === socket.id);
-    if (existingIndex !== -1) {
-      matchmakingQueue[existingIndex] = { id: socket.id, name, color };
-    } else {
-      matchmakingQueue.push({ id: socket.id, name, color });
-      console.log(`Player added to matchmaking queue: ${name} (${socket.id}). Queue length: ${matchmakingQueue.length}`);
-    }
 
-    // Matchmaking logic: 2 players required
-    if (matchmakingQueue.length >= 2) {
-      const p1 = matchmakingQueue.shift();
-      const p2 = matchmakingQueue.shift();
-
-      const roomId = `ROOM_MM_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-      const gridSize = 5; // Default grid size for matchmaking matches
-      
-      const roomState = {
-        id: roomId,
-        type: 'matchmaking',
-        players: [
-          { id: p1.id, name: p1.name, color: p1.color },
-          { id: p2.id, name: p2.name, color: p2.color }
-        ],
-        gridSize: gridSize,
-        currentPlayer: 0,
-        board: {
-          hLines: Array(gridSize + 1).fill().map(() => Array(gridSize).fill(false)),
-          vLines: Array(gridSize).fill().map(() => Array(gridSize + 1).fill(false)),
-          boxes: Array(gridSize).fill().map(() => Array(gridSize).fill(null))
-        },
-        scores: [0, 0],
-        isGameOver: false,
-        rematchRequests: new Set()
-      };
-
-      rooms.set(roomId, roomState);
-
-      const s1 = io.sockets.sockets.get(p1.id);
-      const s2 = io.sockets.sockets.get(p2.id);
-
-      if (s1) s1.join(roomId);
-      if (s2) s2.join(roomId);
-
-      console.log(`Matchmaking room created: ${roomId} with players: ${p1.name} and ${p2.name}`);
-
-      io.to(roomId).emit('game_start', {
-        roomId: roomId,
-        players: roomState.players,
-        gridSize: roomState.gridSize,
-        currentPlayer: roomState.currentPlayer,
-        scores: roomState.scores,
-        isMatchmaker: true
-      });
-    }
-  });
-
-  // Handle Matchmaking Leave
-  socket.on('leave_queue', () => {
-    const index = matchmakingQueue.findIndex(p => p.id === socket.id);
-    if (index !== -1) {
-      matchmakingQueue.splice(index, 1);
-      console.log(`Player removed from queue: ${socket.id}`);
-    }
-  });
 
   // Handle Friend Room Creation
   socket.on('create_room', ({ name, color, gridSize }) => {
@@ -332,11 +265,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log(`User disconnected: ${socket.id}`);
     
-    // Remove from queue
-    const qIndex = matchmakingQueue.findIndex(p => p.id === socket.id);
-    if (qIndex !== -1) {
-      matchmakingQueue.splice(qIndex, 1);
-    }
+
 
     // Check all rooms
     for (const [roomId, room] of rooms.entries()) {

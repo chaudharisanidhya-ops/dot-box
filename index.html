@@ -77,37 +77,17 @@
 
         <!-- Online Multiplayer Options (Hidden by default) -->
         <div class="form-group hidden" id="online-options-group">
-          <label>Multiplayer Mode</label>
-          <div class="segmented-control" id="online-submode-control">
-            <button class="active" data-submode="matchmaker" id="btn-online-matchmaker">
-              <span>Matchmaker</span>
-            </button>
-            <button data-submode="friend" id="btn-online-friend">
-              <span>Play with Friend</span>
-            </button>
-          </div>
-          
-          <div class="online-submode-panels">
-            <div id="panel-matchmaker" class="submode-panel">
-              <p class="online-panel-desc">Find a quick game with a random opponent online.</p>
-              <button type="button" id="start-matchmaking-btn" class="primary-btn online-action-btn">
-                <span>Find Match</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          <div class="submode-panel">
+            <p class="online-panel-desc">Create a private game code or enter a code to join your friend.</p>
+            <div class="friend-actions-row">
+              <button type="button" id="create-room-btn" class="secondary-btn online-action-btn-sec">
+                <span>Create Room</span>
               </button>
-            </div>
-            
-            <div id="panel-friend" class="submode-panel hidden">
-              <p class="online-panel-desc">Create a private game code or enter a code to join your friend.</p>
-              <div class="friend-actions-row">
-                <button type="button" id="create-room-btn" class="secondary-btn online-action-btn-sec">
-                  <span>Create Room</span>
+              <div class="join-input-group">
+                <input type="text" id="join-room-input" placeholder="CODE" maxlength="6">
+                <button type="button" id="join-room-btn" class="primary-btn join-room-btn">
+                  <span>Join</span>
                 </button>
-                <div class="join-input-group">
-                  <input type="text" id="join-room-input" placeholder="CODE" maxlength="6">
-                  <button type="button" id="join-room-btn" class="primary-btn join-room-btn">
-                    <span>Join</span>
-                  </button>
-                </div>
               </div>
             </div>
           </div>
@@ -189,7 +169,7 @@
       <!-- Scoreboard Row with central Turn pill indicator -->
       <div class="game-scoreboard-row">
         <div class="player-score-col left" id="p1-card">
-          <span class="player-score-label">PLAYER 1</span>
+          <span class="player-score-label" id="p1-name-display">PLAYER 1</span>
           <span class="player-score-value" id="p1-score-display">0</span>
         </div>
         
@@ -343,7 +323,7 @@
       </div>
 
       <div class="lobby-footer">
-        <button id="lobby-leave-btn" class="secondary-btn">Cancel Matchmaking</button>
+        <button id="lobby-leave-btn" class="secondary-btn">Cancel Lobby</button>
       </div>
     </div>
   </div>

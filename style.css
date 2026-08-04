@@ -1886,7 +1886,8 @@ html {
   padding: 8px 12px;
   text-align: center;
   letter-spacing: 2px;
-  width: 100%;
+  width: auto;
+  min-width: 0;
 }
 
 #join-room-input::placeholder {
@@ -1901,6 +1902,8 @@ html {
   height: 38px;
   font-size: 0.85rem;
   border-radius: var(--radius-sm);
+  width: auto !important;
+  flex-shrink: 0;
 }
 
 /* Lobby Modal Styles */

@@ -533,35 +533,7 @@ const Game = {
       btnModeOnline.addEventListener('click', () => selectMode('online'));
     }
 
-    // Online sub-mode toggles
-    const btnOnlineMatchmaker = document.getElementById('btn-online-matchmaker');
-    const btnOnlineFriend = document.getElementById('btn-online-friend');
-    const panelMatchmaker = document.getElementById('panel-matchmaker');
-    const panelFriend = document.getElementById('panel-friend');
-
-    if (btnOnlineMatchmaker && btnOnlineFriend) {
-      btnOnlineMatchmaker.addEventListener('click', () => {
-        btnOnlineMatchmaker.classList.add('active');
-        btnOnlineFriend.classList.remove('active');
-        if (panelMatchmaker) panelMatchmaker.classList.remove('hidden');
-        if (panelFriend) panelFriend.classList.add('hidden');
-      });
-
-      btnOnlineFriend.addEventListener('click', () => {
-        btnOnlineFriend.classList.add('active');
-        btnOnlineMatchmaker.classList.remove('active');
-        if (panelFriend) panelFriend.classList.remove('hidden');
-        if (panelMatchmaker) panelMatchmaker.classList.add('hidden');
-      });
-    }
-
-    // Online actions
-    const startMatchmakingBtn = document.getElementById('start-matchmaking-btn');
-    if (startMatchmakingBtn) {
-      startMatchmakingBtn.addEventListener('click', () => {
-        this.startOnlineMatchmaking();
-      });
-    }
+    // Create and Join room event listeners
 
     const createRoomBtn = document.getElementById('create-room-btn');
     if (createRoomBtn) {
@@ -885,7 +857,11 @@ const Game = {
         // Only show hover if line is not already placed
         const linePlaced = type === 'h' ? this.hLines[r][c] : this.vLines[r][c];
         if (!linePlaced) {
-          hitbox.classList.add(this.currentPlayer === 0 ? 'p1-hover' : 'p2-hover');
+          if (this.isOnline && this.currentPlayer !== this.onlinePlayerIndex) {
+            return;
+          }
+          const activeLocalPlayer = this.getLocalIndex(this.currentPlayer);
+          hitbox.classList.add(activeLocalPlayer === 0 ? 'p1-hover' : 'p2-hover');
         }
       });
 
@@ -1151,7 +1127,9 @@ const Game = {
     const p2Card = document.getElementById('p2-card');
     const turnPill = document.getElementById('turn-indicator-pill');
 
-    if (this.currentPlayer === 0) {
+    const activeLocalPlayer = this.getLocalIndex(this.currentPlayer);
+
+    if (activeLocalPlayer === 0) {
       if (p1Card) p1Card.classList.add('active');
       if (p2Card) p2Card.classList.remove('active');
       
@@ -1937,46 +1915,11 @@ const Game = {
     });
   },
 
-  startOnlineMatchmaking() {
-    this.sounds.init();
-    const p1Input = document.getElementById('p1-name-input');
-    this.p1Name = p1Input ? p1Input.value.trim() : 'Player 1';
-    if (!this.p1Name) this.p1Name = 'Player 1';
-
-    this.isMatchmaking = true;
-    this.initSocket();
-
-    // Show lobby modal in search state
-    const lobbyModal = document.getElementById('online-lobby-modal');
-    const statusText = document.getElementById('lobby-status-text');
-    const codeBox = document.getElementById('lobby-code-box');
-    const leaveBtn = document.getElementById('lobby-leave-btn');
-
-    if (codeBox) codeBox.classList.add('hidden');
-    if (statusText) statusText.textContent = 'Finding an online opponent...';
-    if (leaveBtn) leaveBtn.textContent = 'Cancel Matchmaking';
-
-    const p1Name = document.getElementById('lobby-p1-name');
-    const p1Dot = document.getElementById('lobby-p1-dot');
-    if (p1Name) p1Name.textContent = this.p1Name;
-    if (p1Dot) p1Dot.style.backgroundColor = this.p1Color;
-
-    const p2Name = document.getElementById('lobby-p2-name');
-    const p2Tag = document.getElementById('lobby-p2-tag');
-    const p2Dot = document.getElementById('lobby-p2-dot');
-    if (p2Name) p2Name.textContent = 'Searching...';
-    if (p2Dot) p2Dot.style.backgroundColor = '#cbd5e1';
-    if (p2Tag) {
-      p2Tag.textContent = 'Waiting';
-      p2Tag.className = 'lobby-player-tag tag-waiting';
+  getLocalIndex(absoluteIndex) {
+    if (this.isOnline) {
+      return absoluteIndex === this.onlinePlayerIndex ? 0 : 1;
     }
-
-    if (lobbyModal) lobbyModal.classList.add('active');
-
-    this.socket.emit('join_queue', {
-      name: this.p1Name,
-      color: this.p1Color
-    });
+    return absoluteIndex;
   },
 
   createOnlineFriendRoom() {
@@ -2135,8 +2078,13 @@ const Game = {
     this.transitionToScreen('game');
 
     // Reset state variables
-    this.p1Score = scores[0];
-    this.p2Score = scores[1];
+    if (this.onlinePlayerIndex === 0) {
+      this.p1Score = scores[0];
+      this.p2Score = scores[1];
+    } else {
+      this.p1Score = scores[1];
+      this.p2Score = scores[0];
+    }
     this.currentPlayer = currentPlayer;
     this.isGameOver = false;
     this.isAiThinking = false;
@@ -2178,12 +2126,15 @@ const Game = {
     // Enhance turn indicator to specify if it is "Your Turn" vs "Opponent's Turn"
     const turnPill = document.getElementById('turn-indicator-pill');
     if (turnPill) {
-      if (this.currentPlayer === this.onlinePlayerIndex) {
+      const activeLocalPlayer = this.getLocalIndex(this.currentPlayer);
+      if (activeLocalPlayer === 0) {
         turnPill.textContent = "Your Turn";
-        turnPill.style.backgroundColor = this.currentPlayer === 0 ? this.p1Color : this.p2Color;
+        turnPill.style.backgroundColor = this.p1Color;
+        turnPill.style.boxShadow = `0 4px 12px ${this.p1Color}40`;
       } else {
         turnPill.textContent = "Opponent's Turn";
-        turnPill.style.backgroundColor = this.currentPlayer === 0 ? this.p1Color : this.p2Color;
+        turnPill.style.backgroundColor = this.p2Color;
+        turnPill.style.boxShadow = `0 4px 12px ${this.p2Color}40`;
       }
     }
   },
@@ -2199,13 +2150,14 @@ const Game = {
     }
 
     // Determine mover index
-    const mover = boxesCaptured.length > 0 ? nextPlayer : (1 - nextPlayer);
+    const absoluteMover = boxesCaptured.length > 0 ? nextPlayer : (1 - nextPlayer);
+    const localMover = this.getLocalIndex(absoluteMover);
 
     // Style the clicked line
     const lineEl = document.getElementById(`line-${type}-${r}-${c}`);
     if (lineEl) {
       lineEl.classList.remove('unclicked');
-      lineEl.classList.add(mover === 0 ? 'p1-move' : 'p2-move');
+      lineEl.classList.add(localMover === 0 ? 'p1-move' : 'p2-move');
     }
 
     this.sounds.playLine();
@@ -2213,19 +2165,19 @@ const Game = {
 
     if (boxesCaptured.length > 0) {
       boxesCaptured.forEach(box => {
-        this.boxes[box.r][box.c] = mover;
+        this.boxes[box.r][box.c] = localMover;
         const rectEl = document.getElementById(`box-${box.r}-${box.c}`);
         const textEl = document.getElementById(`box-text-${box.r}-${box.c}`);
         if (rectEl) {
-          rectEl.classList.add(mover === 0 ? 'p1-captured' : 'p2-captured');
+          rectEl.classList.add(localMover === 0 ? 'p1-captured' : 'p2-captured');
         }
         if (textEl) {
-          textEl.classList.add(mover === 0 ? 'p1-text' : 'p2-text');
-          textEl.textContent = mover === 0 ? "1" : "2";
+          textEl.classList.add(localMover === 0 ? 'p1-text' : 'p2-text');
+          textEl.textContent = localMover === 0 ? "1" : "2";
         }
       });
       
-      if (mover === 0) {
+      if (localMover === 0) {
         this.pulseScoreElement('p1-score-display');
       } else {
         this.pulseScoreElement('p2-score-display');
@@ -2233,8 +2185,13 @@ const Game = {
       this.sounds.playBox();
     }
 
-    this.p1Score = scores[0];
-    this.p2Score = scores[1];
+    if (this.onlinePlayerIndex === 0) {
+      this.p1Score = scores[0];
+      this.p2Score = scores[1];
+    } else {
+      this.p1Score = scores[1];
+      this.p2Score = scores[0];
+    }
     this.currentPlayer = nextPlayer;
     this.updateOnlineUI();
 
