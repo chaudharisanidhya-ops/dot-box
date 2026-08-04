@@ -1785,8 +1785,9 @@ const Game = {
     if (this.socket) return;
     
     // Auto-detect server port. Vite runs on 5173, express on 3000 in dev.
-    const serverUrl = window.location.hostname === 'localhost' && window.location.port !== '3000'
-      ? 'http://localhost:3000'
+    const isDev = window.location.port !== '' && window.location.port !== '3000';
+    const serverUrl = isDev
+      ? window.location.protocol + '//' + window.location.hostname + ':3000'
       : window.location.origin;
       
     this.socket = io(serverUrl);

@@ -364,8 +364,9 @@
   <!-- Scripts -->
   <script>
     (function() {
-      const serverUrl = window.location.hostname === 'localhost' && window.location.port !== '3000'
-        ? 'http://localhost:3000'
+      const isDev = window.location.port !== '' && window.location.port !== '3000';
+      const serverUrl = isDev
+        ? window.location.protocol + '//' + window.location.hostname + ':3000'
         : window.location.origin;
       document.write('<script src="' + serverUrl + '/socket.io/socket.io.js"><\/script>');
     })();

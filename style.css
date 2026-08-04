@@ -1835,11 +1835,21 @@ html {
   gap: 12px;
 }
 
+.friend-actions-row button, 
+.friend-actions-row .join-input-group {
+  width: 100%;
+}
+
 @media (min-width: 480px) {
   .friend-actions-row {
     flex-direction: row;
     align-items: center;
     gap: 12px;
+  }
+
+  .friend-actions-row button, 
+  .friend-actions-row .join-input-group {
+    width: auto;
   }
 }
 
