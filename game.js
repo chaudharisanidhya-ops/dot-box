@@ -1784,13 +1784,8 @@ const Game = {
   initSocket() {
     if (this.socket) return;
     
-    // Auto-detect server port. Vite runs on 5173, express on 3000 in dev.
-    const isDev = window.location.port !== '' && window.location.port !== '3000';
-    const serverUrl = isDev
-      ? window.location.protocol + '//' + window.location.hostname + ':3000'
-      : window.location.origin;
-      
-    this.socket = io(serverUrl);
+    // Connect to same origin. Vite proxies dev traffic to Node port 3000.
+    this.socket = io();
     this.setupSocketListeners();
   },
 

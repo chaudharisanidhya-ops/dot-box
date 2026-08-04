@@ -1835,8 +1835,8 @@ html {
   gap: 12px;
 }
 
-.friend-actions-row button, 
-.friend-actions-row .join-input-group {
+.friend-actions-row > button, 
+.friend-actions-row > .join-input-group {
   width: 100%;
 }
 
@@ -1847,8 +1847,8 @@ html {
     gap: 12px;
   }
 
-  .friend-actions-row button, 
-  .friend-actions-row .join-input-group {
+  .friend-actions-row > button, 
+  .friend-actions-row > .join-input-group {
     width: auto;
   }
 }

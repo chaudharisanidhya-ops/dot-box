@@ -362,15 +362,7 @@
   </div>
 
   <!-- Scripts -->
-  <script>
-    (function() {
-      const isDev = window.location.port !== '' && window.location.port !== '3000';
-      const serverUrl = isDev
-        ? window.location.protocol + '//' + window.location.hostname + ':3000'
-        : window.location.origin;
-      document.write('<script src="' + serverUrl + '/socket.io/socket.io.js"><\/script>');
-    })();
-  </script>
+  <script src="/socket.io/socket.io.js"></script>
   <script src="game.js"></script>
 </body>
 </html>
