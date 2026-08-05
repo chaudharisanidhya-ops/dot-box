@@ -512,7 +512,6 @@ const Game = {
     if (btnModePvp) {
       btnModePvp.addEventListener('click', () => selectMode('pvp'));
     }
-    }
     const lobbyLeaveBtn = document.getElementById('lobby-leave-btn');
     if (lobbyLeaveBtn) {
       lobbyLeaveBtn.addEventListener('click', () => this.leaveOnlineLobby());
