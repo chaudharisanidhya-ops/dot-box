@@ -2144,3 +2144,538 @@ html {
 .lobby-footer button {
   width: 100%;
 }
+
+/* ==========================================================================
+   Dashboard, Setups & Dark Mode Styling
+   ========================================================================== */
+
+/* 1. Global Dark Mode Variables Override */
+body.dark {
+  --bg-primary: #090d16;
+  --bg-secondary: rgba(17, 24, 39, 0.45);
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --board-bg: rgba(17, 24, 39, 0.6);
+  --dot-color: #4b5563;
+  --line-unselected: rgba(255, 255, 255, 0.06);
+  --line-hover: rgba(255, 255, 255, 0.12);
+}
+
+body.dark .bg-blur-1 {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(0,0,0,0) 75%);
+}
+
+body.dark .bg-blur-2 {
+  background: radial-gradient(circle, rgba(244, 63, 94, 0.12) 0%, rgba(0,0,0,0) 75%);
+}
+
+body.dark .selector-card {
+  background: rgba(31, 41, 55, 0.5) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+body.dark .selector-card:hover {
+  border-color: rgba(99, 102, 241, 0.3) !important;
+}
+
+body.dark .selector-card.active {
+  border-color: #3f47e0 !important;
+  background: rgba(63, 71, 224, 0.15) !important;
+}
+
+body.dark .custom-name-input {
+  background: rgba(17, 24, 39, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f3f4f6 !important;
+}
+
+body.dark .custom-name-input:focus {
+  border-color: #3f47e0 !important;
+  background: rgba(17, 24, 39, 0.6) !important;
+}
+
+body.dark .player-setup-card {
+  background: rgba(31, 41, 55, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+body.dark .modal-card {
+  background: #111827 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f3f4f6 !important;
+}
+
+body.dark .segmented-control {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+body.dark .segmented-control button.active {
+  background: #1f2937 !important;
+  color: #818cf8 !important;
+}
+
+body.dark .close-btn {
+  color: #9ca3af !important;
+}
+
+body.dark .board-card {
+  background: rgba(17, 24, 39, 0.5) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 2. Fast Screen Transition Override (<250ms) */
+.screen {
+  display: none;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.screen.active {
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 3. Header Top Bar Elements */
+.app-title {
+  font-size: 1.45rem;
+  font-weight: 850;
+  letter-spacing: -0.5px;
+  color: #3f47e0;
+}
+
+body.dark .app-title {
+  color: #818cf8;
+}
+
+.profile-btn, .theme-toggle-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.profile-btn:hover, .theme-toggle-btn:hover {
+  transform: scale(1.06);
+  background: var(--bg-primary);
+  border-color: rgba(63, 71, 224, 0.25);
+  color: #3f47e0;
+}
+
+.profile-btn:active, .theme-toggle-btn:active {
+  transform: scale(0.96);
+}
+
+/* 4. Illustration Section */
+.illustration-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 180px;
+  max-height: 35vh;
+  margin: 16px 0;
+  padding: 8px;
+  overflow: hidden;
+}
+
+.dashboard-illustration {
+  max-width: 180px;
+  max-height: 180px;
+  filter: drop-shadow(0 8px 16px rgba(31, 38, 135, 0.06));
+}
+
+.ill-box {
+  opacity: 0.05;
+  transition: fill 0.5s ease;
+}
+
+.ill-box.box-1 {
+  fill: #3f47e0;
+  animation: pulseBox1 4s ease-in-out infinite;
+}
+
+.ill-box.box-2 {
+  fill: #b91c1c;
+  animation: pulseBox2 4s ease-in-out infinite;
+}
+
+.ill-line {
+  stroke-linecap: round;
+  stroke-width: 3.5;
+}
+
+.ill-line.p1-drawn {
+  stroke: #3f47e0;
+}
+
+.ill-line.p2-drawn {
+  stroke: #b91c1c;
+}
+
+.ill-line.ill-drawing-line {
+  stroke: #3f47e0;
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: animDrawingLine 4s ease-in-out infinite;
+}
+
+.ill-dot {
+  fill: var(--dot-color);
+  transition: fill 0.3s;
+}
+
+@keyframes animDrawingLine {
+  0%, 15% { stroke-dashoffset: 60; opacity: 0; }
+  20% { opacity: 1; }
+  45%, 70% { stroke-dashoffset: 0; opacity: 1; }
+  75%, 100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+@keyframes pulseBox1 {
+  0%, 30% { opacity: 0.05; }
+  45%, 100% { opacity: 0.2; }
+}
+
+@keyframes pulseBox2 {
+  0%, 65% { opacity: 0.05; }
+  80%, 100% { opacity: 0.2; }
+}
+
+/* 5. Dashboard Buttons & Layout */
+.dashboard-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.large-btn {
+  padding: 18px 24px !important;
+  font-size: 1.2rem !important;
+  border-radius: 22px !important;
+}
+
+/* 6. Setup Container Elements */
+.screen-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.setup-scroll-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 8px 2px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.setup-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.setup-section-label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  text-align: left;
+}
+
+/* Selector Card Grid & Design */
+.card-selector-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.selector-card {
+  border: 1.5px solid rgba(0, 0, 0, 0.06);
+  background: #f8fafc;
+  border-radius: var(--radius-md);
+  padding: 16px 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  min-height: 90px;
+  outline: none;
+}
+
+.selector-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(63, 71, 224, 0.35);
+  box-shadow: var(--shadow-md);
+}
+
+.selector-card:active {
+  transform: translateY(1px);
+}
+
+.selector-card.active {
+  border-color: #3f47e0;
+  border-width: 2px;
+  background: rgba(63, 71, 224, 0.04);
+  box-shadow: 0 4px 14px rgba(63, 71, 224, 0.08);
+}
+
+.card-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.selector-card.active .card-label {
+  color: #3f47e0;
+}
+
+body.dark .selector-card.active .card-label {
+  color: #818cf8;
+}
+
+/* Star ratings design */
+.stars-row {
+  display: flex;
+  gap: 3px;
+}
+
+.star-icon {
+  width: 13px;
+  height: 13px;
+  color: #cbd5e1;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  transition: all 0.2s;
+}
+
+.star-icon.filled {
+  color: #f59e0b;
+  fill: #f59e0b;
+}
+
+/* Grid Previews */
+.dot-grid-preview {
+  display: grid;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(15, 23, 42, 0.03);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+body.dark .dot-grid-preview {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.dot-grid-preview span {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #94a3b8;
+}
+
+body.dark .dot-grid-preview span {
+  background: #64748b;
+}
+
+.selector-card.active .dot-grid-preview span {
+  background: #3f47e0;
+}
+
+body.dark .selector-card.active .dot-grid-preview span {
+  background: #818cf8;
+}
+
+.dot-grid-preview.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+  width: 22px;
+  height: 22px;
+}
+
+.dot-grid-preview.grid-5 {
+  grid-template-columns: repeat(5, 1fr);
+  width: 38px;
+  height: 38px;
+}
+
+.dot-grid-preview.grid-7 {
+  grid-template-columns: repeat(7, 1fr);
+  width: 54px;
+  height: 54px;
+  gap: 3px;
+}
+
+.dot-grid-preview.grid-7 span {
+  width: 3px;
+  height: 3px;
+}
+
+/* Side-by-side colors layout */
+.colors-setup-split {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.player-color-column {
+  flex: 1;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.column-name {
+  font-size: 0.9rem;
+  font-weight: 750;
+  color: var(--text-main);
+}
+
+/* Players Setup rows */
+.players-setup-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.player-setup-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.player-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.custom-name-input {
+  flex: 1;
+  background: rgba(15, 23, 42, 0.03);
+  border: 1.5px solid rgba(15, 23, 42, 0.06);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.custom-name-input:focus {
+  border-color: #3f47e0;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(63, 71, 224, 0.12);
+}
+
+.selected-color-preview {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #3f47e0;
+  border: 2px solid #ffffff;
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+body.dark .selected-color-preview {
+  border-color: #1f2937;
+}
+
+/* Colors palette alignment override */
+.color-options-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.color-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.color-dot:hover {
+  transform: scale(1.15);
+}
+
+.color-dot.active {
+  transform: scale(1.1);
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px var(--selected-color);
+}
+
+body.dark .color-dot.active {
+  border-color: #1f2937;
+}
+
+.setup-footer {
+  width: 100%;
+  padding-top: 14px;
+}
+
+/* Profile dialog / overlay modal details */
+.profile-avatar-large {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.04);
+  border-radius: 50%;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto;
+}
+
+body.dark .profile-avatar-large {
+  background: rgba(255, 255, 255, 0.04);
+}

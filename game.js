@@ -429,21 +429,27 @@ const Game = {
 
   // Element Cache
   screens: {
-    menu: null,
+    dashboard: null,
+    setupComputer: null,
+    setupPassPlay: null,
     game: null
   },
 
   init() {
     window.Game = this;
     // Cache UI elements
-    this.screens.menu = document.getElementById('menu-screen');
+    this.screens.dashboard = document.getElementById('dashboard-screen');
+    this.screens.setupComputer = document.getElementById('setup-computer-screen');
+    this.screens.setupPassPlay = document.getElementById('setup-pass-play-screen');
     this.screens.game = document.getElementById('game-screen');
     
     this.loadStats();
     this.setupMenuEventListeners();
     this.setupGameEventListeners();
-    this.setupColorPalettes();
     this.sounds.updateMuteUI();
+
+    // Theme initialization
+    this.initTheme();
 
     // Initialize Particles
     this.particles.init('game-over-particles');
@@ -460,65 +466,126 @@ const Game = {
     document.documentElement.style.setProperty('--p2-color-rgb', this.hexToRgb(this.p2Color));
   },
 
-  setupMenuEventListeners() {
-    // Game Mode segment controllers
-    const btnModeAi = document.getElementById('btn-mode-ai');
-    const btnModePvp = document.getElementById('btn-mode-pvp');
-    const diffGroup = document.getElementById('difficulty-group');
-    const p2CustomizeCard = document.getElementById('p2-customize-card');
-    const startGameBtn = document.getElementById('start-game-btn');
+  initTheme() {
+    const savedTheme = localStorage.getItem('dots_boxes_theme') || 'light';
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+    this.updateThemeIcons(savedTheme === 'dark');
 
-    const selectMode = (mode) => {
-      this.gameMode = mode;
-      
-      // Update UI button active states
-      [btnModeAi, btnModePvp].forEach(btn => {
-        if (btn) btn.classList.remove('active');
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        const isDark = document.body.classList.toggle('dark');
+        const theme = isDark ? 'dark' : 'light';
+        localStorage.setItem('dots_boxes_theme', theme);
+        this.updateThemeIcons(isDark);
       });
+    }
+  },
 
-      if (mode === 'ai') {
-        if (btnModeAi) btnModeAi.classList.add('active');
-        if (diffGroup) diffGroup.classList.remove('hidden');
-        if (p2CustomizeCard) p2CustomizeCard.classList.remove('hidden');
-        if (startGameBtn) startGameBtn.style.display = 'block';
-        this.p2Name = 'Computer';
-        
-        const label = document.getElementById('p2-color-label');
-        if (label) label.textContent = 'Computer Color';
-        const nameLabel = document.getElementById('p2-name-label');
-        if (nameLabel) nameLabel.textContent = 'Computer Name';
-        const nameInput = document.getElementById('p2-name-input');
-        if (nameInput) nameInput.value = 'Computer';
-      } else if (mode === 'pvp') {
-        if (btnModePvp) btnModePvp.classList.add('active');
-        if (diffGroup) diffGroup.classList.add('hidden');
-        if (p2CustomizeCard) p2CustomizeCard.classList.remove('hidden');
-        if (startGameBtn) startGameBtn.style.display = 'block';
-        this.p2Name = 'Player 2';
-        
-        const label = document.getElementById('p2-color-label');
-        if (label) label.textContent = 'Player 2 Color';
-        const nameLabel = document.getElementById('p2-name-label');
-        if (nameLabel) nameLabel.textContent = 'Player 2 Name';
-        const nameInput = document.getElementById('p2-name-input');
-        if (nameInput) nameInput.value = 'Player 2';
-
+  updateThemeIcons(isDark) {
+    const sunIcon = document.querySelector('#theme-toggle-btn .sun-icon');
+    const moonIcon = document.querySelector('#theme-toggle-btn .moon-icon');
+    if (sunIcon && moonIcon) {
+      if (isDark) {
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+      } else {
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
       }
-    };
+    }
+  },
 
-    if (btnModeAi) {
-      btnModeAi.addEventListener('click', () => selectMode('ai'));
+  setupMenuEventListeners() {
+    // Dashboard actions
+    const vsCompBtn = document.getElementById('dashboard-vs-computer-btn');
+    const passPlayBtn = document.getElementById('dashboard-pass-play-btn');
+    
+    // Profiles modal actions
+    const profileBtn = document.getElementById('profile-btn');
+    const profileModal = document.getElementById('profile-modal');
+    const profileCloseBtn = document.getElementById('profile-close-btn');
+    const profileOkBtn = document.getElementById('profile-ok-btn');
+
+    if (profileBtn && profileModal) {
+      profileBtn.addEventListener('click', () => {
+        profileModal.classList.add('active');
+      });
     }
-    if (btnModePvp) {
-      btnModePvp.addEventListener('click', () => selectMode('pvp'));
-    }
-    const lobbyLeaveBtn = document.getElementById('lobby-leave-btn');
-    if (lobbyLeaveBtn) {
-      lobbyLeaveBtn.addEventListener('click', () => this.leaveOnlineLobby());
+    [profileCloseBtn, profileOkBtn, profileModal].forEach(el => {
+      if (el) {
+        el.addEventListener('click', (e) => {
+          if (e.target === el || el === profileCloseBtn || el === profileOkBtn) {
+            profileModal.classList.remove('active');
+          }
+        });
+      }
+    });
+
+    if (vsCompBtn) {
+      vsCompBtn.addEventListener('click', () => {
+        this.gameMode = 'ai';
+        // Reset setup state to defaults
+        this.aiDifficulty = 'medium';
+        this.gridSize = 5;
+        this.p1Color = '#3f47e0';
+        this.p2Color = '#b91c1c';
+        
+        // Update UI selection cards to active status
+        document.querySelectorAll('#ai-difficulty-control .selector-card').forEach(card => {
+          card.classList.toggle('active', card.getAttribute('data-difficulty') === 'medium');
+        });
+        document.querySelectorAll('#ai-size-control .selector-card').forEach(card => {
+          card.classList.toggle('active', parseInt(card.getAttribute('data-size'), 10) === 5);
+        });
+
+        this.setupColorPalettes();
+        this.applyPlayerColorVariables();
+        this.transitionToScreen('setup-computer');
+      });
     }
 
-    // Difficulty control
-    const diffButtons = document.querySelectorAll('#difficulty-control button');
+    if (passPlayBtn) {
+      passPlayBtn.addEventListener('click', () => {
+        this.gameMode = 'pvp';
+        // Reset setup state to defaults
+        this.gridSize = 5;
+        this.p1Color = '#3f47e0';
+        this.p2Color = '#b91c1c';
+        
+        document.getElementById('pvp-p1-name-input').value = '';
+        document.getElementById('pvp-p2-name-input').value = '';
+
+        document.querySelectorAll('#pvp-size-control .selector-card').forEach(card => {
+          card.classList.toggle('active', parseInt(card.getAttribute('data-size'), 10) === 5);
+        });
+
+        this.setupColorPalettes();
+        this.applyPlayerColorVariables();
+        this.transitionToScreen('setup-pass-play');
+      });
+    }
+
+    // Back to dashboard
+    const backAi = document.getElementById('back-to-dashboard-ai');
+    if (backAi) {
+      backAi.addEventListener('click', () => {
+        this.transitionToScreen('dashboard');
+      });
+    }
+    const backPvp = document.getElementById('back-to-dashboard-pvp');
+    if (backPvp) {
+      backPvp.addEventListener('click', () => {
+        this.transitionToScreen('dashboard');
+      });
+    }
+
+    // AI setup selections
+    const diffButtons = document.querySelectorAll('#ai-difficulty-control .selector-card');
     diffButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         diffButtons.forEach(b => b.classList.remove('active'));
@@ -527,27 +594,50 @@ const Game = {
       });
     });
 
-    // Grid size control
-    const sizeButtons = document.querySelectorAll('#size-control button');
-    sizeButtons.forEach(btn => {
+    const aiSizeButtons = document.querySelectorAll('#ai-size-control .selector-card');
+    aiSizeButtons.forEach(btn => {
       btn.addEventListener('click', () => {
-        sizeButtons.forEach(b => b.classList.remove('active'));
+        aiSizeButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         this.gridSize = parseInt(btn.getAttribute('data-size'), 10);
       });
     });
 
-    // Start Button (Local Mode)
-    const startBtn = document.getElementById('start-game-btn');
-    if (startBtn) {
-      startBtn.addEventListener('click', () => {
+    // PvP setup selections
+    const pvpSizeButtons = document.querySelectorAll('#pvp-size-control .selector-card');
+    pvpSizeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        pvpSizeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.gridSize = parseInt(btn.getAttribute('data-size'), 10);
+      });
+    });
+
+    // Start Game - Computer
+    const startCompBtn = document.getElementById('start-computer-game-btn');
+    if (startCompBtn) {
+      startCompBtn.addEventListener('click', () => {
         this.sounds.init();
-        const p1Input = document.getElementById('p1-name-input');
-        const p2Input = document.getElementById('p2-name-input');
-        this.p1Name = p1Input ? p1Input.value.trim() : 'Player 1';
-        this.p2Name = p2Input ? p2Input.value.trim() : (this.gameMode === 'ai' ? 'Computer' : 'Player 2');
+        this.p1Name = 'You';
+        this.p2Name = 'Computer';
+        this.launchGame();
+      });
+    }
+
+    // Start Game - Pass & Play
+    const startPvpBtn = document.getElementById('start-pass-play-btn');
+    if (startPvpBtn) {
+      startPvpBtn.addEventListener('click', () => {
+        this.sounds.init();
+        const p1Input = document.getElementById('pvp-p1-name-input');
+        const p2Input = document.getElementById('pvp-p2-name-input');
+        
+        this.p1Name = p1Input ? p1Input.value.trim() : '';
+        this.p2Name = p2Input ? p2Input.value.trim() : '';
+        
         if (!this.p1Name) this.p1Name = 'Player 1';
-        if (!this.p2Name) this.p2Name = (this.gameMode === 'ai' ? 'Computer' : 'Player 2');
+        if (!this.p2Name) this.p2Name = 'Player 2';
+        
         this.launchGame();
       });
     }
@@ -588,11 +678,11 @@ const Game = {
   },
 
   setupGameEventListeners() {
-    // Back to Menu
+    // Back to Menu (Dashboard)
     const backMenuBtn = document.getElementById('back-to-menu-btn');
     if (backMenuBtn) {
       backMenuBtn.addEventListener('click', () => {
-        this.transitionToScreen('menu');
+        this.transitionToScreen('dashboard');
       });
     }
 
@@ -620,7 +710,7 @@ const Game = {
       });
     }
 
-    // Modal buttons
+    // Modal replay
     const replayBtn = document.getElementById('modal-replay-btn');
     if (replayBtn) {
       replayBtn.addEventListener('click', () => {
@@ -637,49 +727,48 @@ const Game = {
         const modal = document.getElementById('game-over-modal');
         if (modal) modal.classList.remove('active');
         this.particles.stop();
-        this.transitionToScreen('menu');
+        this.transitionToScreen('dashboard');
       });
     }
   },
 
   transitionToScreen(screenName) {
     const loader = document.getElementById('screen-loader');
+    const screensMap = {
+      dashboard: this.screens.dashboard,
+      'setup-computer': this.screens.setupComputer,
+      'setup-pass-play': this.screens.setupPassPlay,
+      game: this.screens.game
+    };
+
+    const activeScreen = screensMap[screenName];
+    if (!activeScreen) return;
+
+    const doTransition = () => {
+      Object.values(screensMap).forEach(scr => {
+        if (scr) {
+          scr.classList.remove('active');
+          scr.style.display = 'none';
+        }
+      });
+      activeScreen.style.display = 'flex';
+      void activeScreen.offsetWidth;
+      activeScreen.classList.add('active');
+    };
+
     if (!loader) {
-      if (screenName === 'menu') {
-        this.screens.game.classList.remove('active');
-        this.screens.game.style.display = 'none';
-        this.screens.menu.style.display = 'flex';
-        this.screens.menu.classList.add('active');
-      } else {
-        this.screens.menu.classList.remove('active');
-        this.screens.menu.style.display = 'none';
-        this.screens.game.style.display = 'flex';
-        this.screens.game.classList.add('active');
-      }
+      doTransition();
       return;
     }
 
-    // Activate Loader
+    // Quick loader screen transition (<250ms total animation time)
     loader.classList.add('active');
-
     setTimeout(() => {
-      if (screenName === 'menu') {
-        this.screens.game.classList.remove('active');
-        this.screens.game.style.display = 'none';
-        this.screens.menu.style.display = 'flex';
-        this.screens.menu.classList.add('active');
-      } else {
-        this.screens.menu.classList.remove('active');
-        this.screens.menu.style.display = 'none';
-        this.screens.game.style.display = 'flex';
-        this.screens.game.classList.add('active');
-      }
-      
-      // Deactivate Loader after a short visual delay to let layout repaint
+      doTransition();
       setTimeout(() => {
         loader.classList.remove('active');
-      }, 250);
-    }, 450);
+      }, 70);
+    }, 100);
   },
 
   launchGame() {
@@ -687,7 +776,7 @@ const Game = {
     const p1NameDisp = document.getElementById('p1-name-display');
     if (p1NameDisp) p1NameDisp.textContent = this.p1Name;
     const p2NameDisp = document.getElementById('p2-name-display');
-    if (p2NameDisp) p2NameDisp.textContent = this.gameMode === 'ai' ? 'COMPUTER' : 'PLAYER 2';
+    if (p2NameDisp) p2NameDisp.textContent = this.p2Name;
     
     // Set avatars initials if exist
     const p1Av = document.querySelector('.p1-avatar-initial');
@@ -1567,115 +1656,79 @@ const Game = {
   }
 ,
   setupColorPalettes() {
-    const p1Palette = document.getElementById('p1-color-palette');
-    const p2Palette = document.getElementById('p2-color-palette');
-    if (!p1Palette || !p2Palette) return;
+    const PALETTE = ['#3f47e0', '#b91c1c', '#f97316', '#10b981', '#8b5cf6', '#ec4899'];
 
-    const p1Dots = p1Palette.querySelectorAll('.color-dot');
-    const p2Dots = p2Palette.querySelectorAll('.color-dot');
-
-    const expandP1Palette = () => {
-      p1Dots.forEach(dot => dot.classList.remove('hidden'));
-      const moreBtn = document.getElementById('p1-more-colors-btn');
-      if (moreBtn) moreBtn.style.display = 'none';
-    };
-
-    const expandP2Palette = () => {
-      p2Dots.forEach(dot => dot.classList.remove('hidden'));
-      const moreBtn = document.getElementById('p2-more-colors-btn');
-      if (moreBtn) moreBtn.style.display = 'none';
-    };
-
-    const selectP1Color = (color) => {
-      this.p1Color = color;
-      p1Dots.forEach(dot => {
-        const dotColor = dot.getAttribute('data-color');
-        if (dotColor === color) {
-          dot.classList.add('active');
-          dot.style.setProperty('--selected-color', color);
-          // If color is hidden, expand the palette
-          if (dot.classList.contains('hidden')) {
-            expandP1Palette();
-          }
-        } else {
-          dot.classList.remove('active');
-        }
-      });
+    const render = (containerId, previewId, selectedColor, onSelect) => {
+      const container = document.getElementById(containerId);
+      const preview = document.getElementById(previewId);
+      if (!container) return;
       
-      // Update selected color preview dot background
-      const preview = document.getElementById('p1-preview-dot');
-      if (preview) preview.style.backgroundColor = color;
-
-      // Prevent overlapping colors
-      if (this.p2Color === color) {
-        const otherColors = ['#3f47e0', '#b91c1c', '#6b7bba', '#f97316'];
-        const alternative = otherColors.find(c => c !== color);
-        selectP2Color(alternative);
+      container.innerHTML = '';
+      if (preview) {
+        preview.style.backgroundColor = selectedColor;
       }
-      this.applyPlayerColorVariables();
+
+      PALETTE.forEach(color => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `color-dot ${color === selectedColor ? 'active' : ''}`;
+        btn.style.backgroundColor = color;
+        btn.style.setProperty('--selected-color', color);
+        btn.setAttribute('data-color', color);
+        
+        btn.addEventListener('click', () => {
+          onSelect(color);
+        });
+        
+        container.appendChild(btn);
+      });
     };
 
-    const selectP2Color = (color) => {
-      this.p2Color = color;
-      p2Dots.forEach(dot => {
-        const dotColor = dot.getAttribute('data-color');
-        if (dotColor === color) {
-          dot.classList.add('active');
-          dot.style.setProperty('--selected-color', color);
-          // If color is hidden, expand the palette
-          if (dot.classList.contains('hidden')) {
-            expandP2Palette();
-          }
-        } else {
-          dot.classList.remove('active');
+    if (this.gameMode === 'ai') {
+      render('ai-p1-color-palette', 'ai-p1-preview-dot', this.p1Color, (color) => {
+        this.p1Color = color;
+        // Collision auto-resolution: You overrides Computer color
+        if (this.p2Color === color) {
+          const nextIndex = (PALETTE.indexOf(color) + 1) % PALETTE.length;
+          this.p2Color = PALETTE[nextIndex];
         }
+        this.setupColorPalettes();
+        this.applyPlayerColorVariables();
       });
 
-      // Update selected color preview dot background
-      const preview = document.getElementById('p2-preview-dot');
-      if (preview) preview.style.backgroundColor = color;
-
-      // Prevent overlapping colors
-      if (this.p1Color === color) {
-        const otherColors = ['#3f47e0', '#b91c1c', '#6b7bba', '#f97316'];
-        const alternative = otherColors.find(c => c !== color);
-        selectP1Color(alternative);
-      }
-      this.applyPlayerColorVariables();
-    };
-
-    p1Dots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        selectP1Color(dot.getAttribute('data-color'));
+      render('ai-p2-color-palette', 'ai-p2-preview-dot', this.p2Color, (color) => {
+        this.p2Color = color;
+        // Collision auto-resolution: Computer overrides You color
+        if (this.p1Color === color) {
+          const nextIndex = (PALETTE.indexOf(color) + 1) % PALETTE.length;
+          this.p1Color = PALETTE[nextIndex];
+        }
+        this.setupColorPalettes();
+        this.applyPlayerColorVariables();
       });
-    });
-
-    p2Dots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        selectP2Color(dot.getAttribute('data-color'));
+    } else {
+      render('pvp-p1-color-palette', 'pvp-p1-preview-dot', this.p1Color, (color) => {
+        this.p1Color = color;
+        // Collision auto-resolution: Player 1 overrides Player 2 color
+        if (this.p2Color === color) {
+          const nextIndex = (PALETTE.indexOf(color) + 1) % PALETTE.length;
+          this.p2Color = PALETTE[nextIndex];
+        }
+        this.setupColorPalettes();
+        this.applyPlayerColorVariables();
       });
-    });
 
-    // Expand click listeners
-    const p1More = document.getElementById('p1-more-colors-btn');
-    if (p1More) {
-      p1More.addEventListener('click', (e) => {
-        e.stopPropagation();
-        expandP1Palette();
-      });
-    }
-
-    const p2More = document.getElementById('p2-more-colors-btn');
-    if (p2More) {
-      p2More.addEventListener('click', (e) => {
-        e.stopPropagation();
-        expandP2Palette();
+      render('pvp-p2-color-palette', 'pvp-p2-preview-dot', this.p2Color, (color) => {
+        this.p2Color = color;
+        // Collision auto-resolution: Player 2 overrides Player 1 color
+        if (this.p1Color === color) {
+          const nextIndex = (PALETTE.indexOf(color) + 1) % PALETTE.length;
+          this.p1Color = PALETTE[nextIndex];
+        }
+        this.setupColorPalettes();
+        this.applyPlayerColorVariables();
       });
     }
-
-    // Initial setup
-    selectP1Color(this.p1Color);
-    selectP2Color(this.p2Color);
   },
 
 
