@@ -51,8 +51,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   position: relative;
   margin: 0;
   padding: 0;
@@ -98,11 +97,15 @@ html {
   width: 100%;
   max-width: 580px;
   padding: 20px;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 10;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* Screen visibility state engine */
@@ -119,6 +122,9 @@ html {
   flex-direction: column;
   opacity: 1;
   transform: translateY(0);
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* ==========================================================================
@@ -913,6 +919,10 @@ html {
 
 /* Mobile and Small Screen Optimizations */
 @media (max-width: 480px) {
+  body {
+    overflow: hidden;
+  }
+  
   .app-container {
     padding: 12px 10px;
   }
@@ -2247,6 +2257,7 @@ body.dark .board-card {
   flex-direction: column;
   opacity: 1;
   transform: translateY(0);
+  height: 100%;
 }
 
 /* 3. Header Top Bar Elements */
@@ -2705,7 +2716,7 @@ body.dark .profile-avatar-large {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  min-height: calc(100vh - 65px);
+  height: 100%;
   width: 100%;
   box-sizing: border-box;
 }
