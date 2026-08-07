@@ -1143,7 +1143,11 @@ const Game = {
       if (p2Card) p2Card.classList.remove('active');
       
       if (turnPill) {
-        turnPill.textContent = "Player 1's Turn";
+        if (this.gameMode === 'ai') {
+          turnPill.textContent = "Your Turn";
+        } else {
+          turnPill.textContent = `${this.p1Name || 'Player 1'}'s Turn`;
+        }
         turnPill.style.backgroundColor = this.p1Color;
         turnPill.style.boxShadow = `0 4px 12px ${this.p1Color}40`;
       }
@@ -1155,7 +1159,7 @@ const Game = {
         if (this.gameMode === 'ai') {
           turnPill.textContent = "Computer's Turn";
         } else {
-          turnPill.textContent = "Player 2's Turn";
+          turnPill.textContent = `${this.p2Name || 'Player 2'}'s Turn`;
         }
         turnPill.style.backgroundColor = this.p2Color;
         turnPill.style.boxShadow = `0 4px 12px ${this.p2Color}40`;
