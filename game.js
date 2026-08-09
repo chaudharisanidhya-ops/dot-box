@@ -456,6 +456,13 @@ const Game = {
     this.setupGameEventListeners();
     this.sounds.updateMuteUI();
 
+    // Initialize Box Points & Daily Challenge
+    if (!localStorage.getItem('dots_boxes_bp')) {
+      localStorage.setItem('dots_boxes_bp', '240');
+    }
+    this.initDailyChallenge();
+    this.updateDashboardProgressionUI();
+
     // Theme initialization
     this.initTheme();
     this.initSettings();
@@ -1600,6 +1607,35 @@ const Game = {
       this.recordAIResult(result);
     }
 
+    // Reward Box Points (BP)
+    let bpGained = 0;
+    if (this.gameMode === 'ai') {
+      if (result === 'win') {
+        if (this.aiDifficulty === 'easy') bpGained = 20;
+        else if (this.aiDifficulty === 'medium') bpGained = 50;
+        else if (this.aiDifficulty === 'hard') bpGained = 100;
+        
+        // Progress challenge
+        this.updateChallengeProgress('win_ai', 1);
+      } else if (result === 'draw') {
+        bpGained = 15;
+      } else {
+        bpGained = 10;
+      }
+    } else if (this.gameMode === 'pvp') {
+      bpGained = result === 'win' ? 30 : 10;
+      this.updateChallengeProgress('complete_pvp', 1);
+    }
+    
+    // Progress box captures daily challenge (P1 captures P1Score boxes)
+    this.updateChallengeProgress('capture_boxes', this.p1Score);
+    
+    let currentBp = parseInt(localStorage.getItem('dots_boxes_bp') || '240', 10);
+    currentBp += bpGained;
+    localStorage.setItem('dots_boxes_bp', currentBp.toString());
+    
+    this.updateDashboardProgressionUI();
+
     // Display modal
     setTimeout(() => {
       modal.classList.add('active');
@@ -1925,6 +1961,162 @@ const Game = {
     }
 
     this.updateUI();
+  },
+
+  getProgression() {
+    let bp = parseInt(localStorage.getItem('dots_boxes_bp') || '240', 10);
+    const bpPerLevel = 500;
+    const level = Math.floor(bp / bpPerLevel) + 1;
+    const currentLevelBp = bp % bpPerLevel;
+    const progressPercent = (currentLevelBp / bpPerLevel) * 100;
+    
+    // Level Titles
+    const titles = [
+      "Beginner", "Dot Amateur", "Line Drawer", "Box Builder", 
+      "Grid Strategist", "Box Collector", "Chain Master", 
+      "Dot Conqueror", "Grid Overlord", "Dot Box Legend"
+    ];
+    const title = titles[Math.min(level - 1, titles.length - 1)];
+    
+    // Avatars
+    const avatars = ["👤", "🎯", "⚡", "🏆", "🌟", "👑", "🤖", "⚔️", "💎", "🔮"];
+    const avatar = avatars[Math.min(level - 1, avatars.length - 1)];
+    
+    return {
+      bp: bp,
+      level: level,
+      title: title,
+      avatar: avatar,
+      currentLevelBp: currentLevelBp,
+      nextLevelBp: bpPerLevel,
+      progressPercent: progressPercent
+    };
+  },
+
+  updateDashboardProgressionUI() {
+    const prog = this.getProgression();
+    
+    const dashLevelVal = document.getElementById('dash-level-val');
+    const dashTitleVal = document.getElementById('dash-title-val');
+    const dashBpVal = document.getElementById('dash-bp-val');
+    const dashProgressFill = document.getElementById('dash-progress-fill');
+    const dashProgressText = document.getElementById('dash-progress-text');
+    const dashAvatarEmoji = document.getElementById('dash-avatar-emoji');
+    
+    if (dashLevelVal) dashLevelVal.textContent = prog.level;
+    if (dashTitleVal) dashTitleVal.textContent = prog.title;
+    if (dashBpVal) dashBpVal.textContent = prog.bp;
+    if (dashProgressFill) dashProgressFill.style.width = `${prog.progressPercent}%`;
+    if (dashProgressText) dashProgressText.textContent = `${prog.currentLevelBp} / ${prog.nextLevelBp} BP to next level`;
+    if (dashAvatarEmoji) dashAvatarEmoji.textContent = prog.avatar;
+    
+    // Also sync to Profile screen elements if they exist
+    const profileName = document.querySelector('.profile-name');
+    const profileLevel = document.querySelector('.profile-level');
+    const profileAvatar = document.querySelector('.profile-avatar-large');
+    
+    if (profileLevel) profileLevel.textContent = `Level ${prog.level} - ${prog.title}`;
+    if (profileAvatar) profileAvatar.textContent = prog.avatar;
+    
+    this.updateDailyChallengeUI();
+  },
+
+  initDailyChallenge() {
+    const today = new Date().toDateString();
+    let challenge = null;
+    try {
+      const saved = localStorage.getItem('dots_boxes_daily_challenge');
+      if (saved) {
+        challenge = JSON.parse(saved);
+      }
+    } catch (e) {
+      console.error("Error reading daily challenge", e);
+    }
+    
+    if (!challenge || challenge.lastDate !== today) {
+      const challenges = [
+        { desc: "Win a game vs Computer", type: "win_ai", target: 1, progress: 0, reward: 100, completed: false },
+        { desc: "Capture 15 boxes in total", type: "capture_boxes", target: 15, progress: 0, reward: 100, completed: false },
+        { desc: "Complete a local PvP match", type: "complete_pvp", target: 1, progress: 0, reward: 100, completed: false }
+      ];
+      const selected = challenges[Math.floor(Math.random() * challenges.length)];
+      selected.lastDate = today;
+      challenge = selected;
+      localStorage.setItem('dots_boxes_daily_challenge', JSON.stringify(challenge));
+    }
+  },
+  
+  updateDailyChallengeUI() {
+    let challenge = null;
+    try {
+      challenge = JSON.parse(localStorage.getItem('dots_boxes_daily_challenge'));
+    } catch (e) {
+      console.error(e);
+    }
+    if (!challenge) return;
+    
+    const descEl = document.getElementById('dash-challenge-desc');
+    const rewardEl = document.getElementById('dash-challenge-reward');
+    const statusEl = document.getElementById('dash-challenge-status');
+    const progressFill = document.getElementById('dash-challenge-progress-fill');
+    
+    if (descEl) descEl.textContent = challenge.desc;
+    if (rewardEl) {
+      if (challenge.completed) {
+        rewardEl.textContent = "CLAIMED";
+        rewardEl.style.background = "rgba(16, 185, 129, 0.2)";
+        rewardEl.style.color = "#10b981";
+      } else {
+        rewardEl.textContent = `+${challenge.reward} BP`;
+        rewardEl.style.background = ""; // Reset inline
+        rewardEl.style.color = "";
+      }
+    }
+    if (statusEl) {
+      if (challenge.completed) {
+        statusEl.innerHTML = "✅ Done";
+      } else {
+        statusEl.textContent = `${challenge.progress}/${challenge.target}`;
+      }
+    }
+    if (progressFill) {
+      const pct = challenge.completed ? 100 : (challenge.progress / challenge.target) * 100;
+      progressFill.style.width = `${pct}%`;
+      if (challenge.completed) {
+        progressFill.style.backgroundColor = "#10b981";
+      } else {
+        progressFill.style.backgroundColor = ""; // reset to CSS default
+      }
+    }
+  },
+  
+  updateChallengeProgress(type, amount) {
+    let challenge = null;
+    try {
+      challenge = JSON.parse(localStorage.getItem('dots_boxes_daily_challenge'));
+    } catch (e) {
+      console.error(e);
+    }
+    if (!challenge || challenge.completed || challenge.type !== type) return;
+    
+    challenge.progress += amount;
+    if (challenge.progress >= challenge.target) {
+      challenge.progress = challenge.target;
+      challenge.completed = true;
+      
+      // Award reward
+      let bp = parseInt(localStorage.getItem('dots_boxes_bp') || '240', 10);
+      bp += challenge.reward;
+      localStorage.setItem('dots_boxes_bp', bp.toString());
+      
+      // Play sound
+      this.sounds.playBox();
+      
+      // Vibrate to indicate success
+      this.vibrate([100, 50, 100]);
+    }
+    
+    localStorage.setItem('dots_boxes_daily_challenge', JSON.stringify(challenge));
   },
 };
 
