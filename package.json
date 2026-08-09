@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently \"npx vite\" \"node server.js\"",
     "start": "node server.js",
-    "build": "npx vite build && npx cap copy"
+    "build": "npx vite build"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.0",
