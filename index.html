@@ -337,25 +337,106 @@
       </div>
     </section>
 
-    <!-- PROFILE/STATS OVERLAY MODAL (Placeholder) -->
-    <div id="profile-modal" class="modal-overlay">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h2>Your Profile</h2>
-          <button id="profile-close-btn" class="close-btn" aria-label="Close Profile">&times;</button>
+    <!-- SCREEN 3: PROFILE & SETTINGS -->
+    <section id="profile-screen" class="screen">
+      <div class="menu-top-header">
+        <button id="back-to-dashboard-profile" class="icon-back-btn" aria-label="Go Back">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <span class="screen-title">Profile & Settings</span>
+        <div style="width: 40px;"></div> <!-- Spacer to center title -->
+      </div>
+
+      <div class="setup-scroll-container">
+        <!-- Profile Card -->
+        <div class="profile-card-container">
+          <div class="profile-avatar-large">🏆</div>
+          <div class="profile-name">Guest Player</div>
+          <div class="profile-level">Level 5 - Box Collector</div>
+          <div class="card-divider" style="margin: 14px 0;"></div>
+          <p class="profile-brief">
+            Your career stats and achievements are tracked automatically. Adjust your preferences below.
+          </p>
         </div>
-        <div class="profile-avatar-large" style="font-size: 3rem; text-align: center; margin: 16px 0;">🏆</div>
-        <div class="profile-name" style="font-size: 1.25rem; font-weight: 700; text-align: center; margin-bottom: 4px;">Guest Player</div>
-        <div class="profile-level" style="font-size: 0.85rem; color: var(--text-muted); text-align: center; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Level 5 - Box Collector</div>
-        <div class="card-divider" style="margin: 16px 0;"></div>
-        <p style="font-size: 0.9rem; color: var(--text-muted); text-align: center; line-height: 1.5;">
-          Detailed career statistics, levels, and achievements are coming soon. Tap below to close.
-        </p>
-        <div class="modal-buttons" style="margin-top: 20px;">
-          <button id="profile-ok-btn" class="primary-btn" style="width: 100%;">Got it!</button>
+
+        <!-- Settings Section Label -->
+        <span class="setup-section-label" style="margin-top: 24px;">Preferences</span>
+
+        <!-- Settings Content directly on the screen -->
+        <div class="settings-content" style="text-align: left; width: 100%;">
+          <!-- Sound Toggle -->
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-title">Sound Effects</span>
+              <span class="setting-desc">Play synthesized sound effects</span>
+            </div>
+            <label class="switch-container">
+              <input type="checkbox" id="settings-sound-toggle" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          
+          <!-- Haptic Feedback Toggle -->
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-title">Haptic Feedback</span>
+              <span class="setting-desc">Vibrate on moves and scores</span>
+            </div>
+            <label class="switch-container">
+              <input type="checkbox" id="settings-haptics-toggle" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          
+          <!-- Board Dot Style Selection -->
+          <div class="setting-item flex-column">
+            <div class="setting-info" style="margin-bottom: 4px;">
+              <span class="setting-title">Board Dot Style</span>
+              <span class="setting-desc">Choose visual style of the grid dots</span>
+            </div>
+            <div class="segmented-control settings-dot-style-control" style="width: 100%; margin-top: 6px;">
+              <button data-dot-style="classic">Classic</button>
+              <button data-dot-style="neon">Neon Glow</button>
+              <button data-dot-style="hollow">Hollow Ring</button>
+            </div>
+          </div>
+
+          <div class="card-divider" style="margin: 16px 0;"></div>
+          
+          <!-- About Accordion -->
+          <div class="settings-expandable-section">
+            <button id="settings-about-trigger" class="expandable-header">
+              <span>About Game</span>
+              <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+            <div id="settings-about-content" class="expandable-content hidden">
+              <p><strong>Dot Box</strong> is a polished, modern digital version of the classic pencil-and-paper game Dots and Boxes.</p>
+              <p style="margin-top: 6px;">Challenge your strategy skills against a multi-level simulated AI, or compete locally in head-to-head Pass & Play matches with integrated win-loss scorecards.</p>
+              <p style="margin-top: 8px; font-size: 0.8rem; color: var(--text-muted);">Version 1.0.0 &bull; Powered by HTML5, CSS3, and JS.</p>
+            </div>
+          </div>
+          
+          <!-- Privacy Policy Accordion -->
+          <div class="settings-expandable-section" style="margin-top: 10px; margin-bottom: 24px;">
+            <button id="settings-privacy-trigger" class="expandable-header">
+              <span>Privacy Policy</span>
+              <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+            <div id="settings-privacy-content" class="expandable-content hidden">
+              <p>We respect your privacy. <strong>Dot Box</strong> operates fully local to your device:</p>
+              <ul style="margin-left: 16px; margin-top: 6px; font-size: 0.82rem; line-height: 1.45;">
+                <li>No personal data or stats are shared or sent online.</li>
+                <li>Everything is persisted locally via Web LocalStorage.</li>
+                <li>Zero telemetry, trackers, or cookies are collected.</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- GAME SCREEN -->
     <section id="game-screen" class="screen">

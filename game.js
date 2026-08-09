@@ -38,6 +38,10 @@ class GameSoundEffects {
         silenceIcon.classList.add('hidden');
       }
     }
+    const settingsSoundToggle = document.getElementById('settings-sound-toggle');
+    if (settingsSoundToggle) {
+      settingsSoundToggle.checked = !this.muted;
+    }
   }
 
   playLine() {
@@ -368,6 +372,8 @@ const Game = {
   p1Color: '#3f47e0',
   p2Color: '#b91c1c',
   history: [],
+  hapticsEnabled: localStorage.getItem('dots_boxes_haptics') !== 'false',
+  dotStyle: localStorage.getItem('dots_boxes_dot_style') || 'classic',
   
   // Dynamic scores & Turn
   p1Score: 0,
@@ -432,7 +438,8 @@ const Game = {
     dashboard: null,
     setupComputer: null,
     setupPassPlay: null,
-    game: null
+    game: null,
+    profile: null
   },
 
   init() {
@@ -442,6 +449,7 @@ const Game = {
     this.screens.setupComputer = document.getElementById('setup-computer-screen');
     this.screens.setupPassPlay = document.getElementById('setup-pass-play-screen');
     this.screens.game = document.getElementById('game-screen');
+    this.screens.profile = document.getElementById('profile-screen');
     
     this.loadStats();
     this.setupMenuEventListeners();
@@ -450,6 +458,7 @@ const Game = {
 
     // Theme initialization
     this.initTheme();
+    this.initSettings();
 
     // Initialize Particles
     this.particles.init('game-over-particles');
@@ -500,31 +509,141 @@ const Game = {
     }
   },
 
+  vibrate(duration = 15) {
+    if (this.hapticsEnabled && navigator.vibrate) {
+      try {
+        navigator.vibrate(duration);
+      } catch (e) {
+        console.warn("Haptics failed", e);
+      }
+    }
+  },
+
+  updateDotStyles() {
+    document.querySelectorAll('.board-dot').forEach(circle => {
+      circle.classList.remove('dot-style-classic', 'dot-style-neon', 'dot-style-hollow');
+      circle.classList.add(`dot-style-${this.dotStyle}`);
+    });
+  },
+
+  initSettings() {
+    // 1. Sync Sound Toggle
+    const soundToggle = document.getElementById('settings-sound-toggle');
+    if (soundToggle) {
+      soundToggle.checked = !this.sounds.muted;
+      soundToggle.addEventListener('change', (e) => {
+        this.sounds.muted = !e.target.checked;
+        localStorage.setItem('dots_boxes_muted', this.sounds.muted);
+        this.sounds.updateMuteUI();
+      });
+    }
+
+    // 2. Sync Haptics Toggle
+    const hapticsToggle = document.getElementById('settings-haptics-toggle');
+    if (hapticsToggle) {
+      hapticsToggle.checked = this.hapticsEnabled;
+      hapticsToggle.addEventListener('change', (e) => {
+        this.hapticsEnabled = e.target.checked;
+        localStorage.setItem('dots_boxes_haptics', this.hapticsEnabled);
+        if (this.hapticsEnabled) {
+          this.vibrate(20);
+        }
+      });
+    }
+
+    // 3. Sync Dot Style Selector
+    const styleButtons = document.querySelectorAll('.settings-dot-style-control button');
+    styleButtons.forEach(btn => {
+      const btnStyle = btn.getAttribute('data-dot-style');
+      if (btnStyle === this.dotStyle) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+
+      btn.addEventListener('click', () => {
+        styleButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.dotStyle = btnStyle;
+        localStorage.setItem('dots_boxes_dot_style', this.dotStyle);
+        this.updateDotStyles();
+        this.vibrate(15);
+      });
+    });
+
+    // 4. Setup About Accordion
+    const aboutTrigger = document.getElementById('settings-about-trigger');
+    const aboutContent = document.getElementById('settings-about-content');
+    const aboutSection = aboutTrigger?.parentElement;
+    if (aboutTrigger && aboutContent) {
+      aboutTrigger.addEventListener('click', () => {
+        const isHidden = aboutContent.classList.toggle('hidden');
+        if (aboutSection) {
+          aboutSection.classList.toggle('active', !isHidden);
+        }
+        // Collapse the privacy accordion if open
+        const privacyContent = document.getElementById('settings-privacy-content');
+        const privacySection = privacyContent?.parentElement;
+        if (!isHidden && privacyContent && !privacyContent.classList.contains('hidden')) {
+          privacyContent.classList.add('hidden');
+          if (privacySection) privacySection.classList.remove('active');
+        }
+        this.vibrate(10);
+      });
+    }
+
+    // 5. Setup Privacy Accordion
+    const privacyTrigger = document.getElementById('settings-privacy-trigger');
+    const privacyContent = document.getElementById('settings-privacy-content');
+    const privacySection = privacyTrigger?.parentElement;
+    if (privacyTrigger && privacyContent) {
+      privacyTrigger.addEventListener('click', () => {
+        const isHidden = privacyContent.classList.toggle('hidden');
+        if (privacySection) {
+          privacySection.classList.toggle('active', !isHidden);
+        }
+        // Collapse the about accordion if open
+        const aboutContent = document.getElementById('settings-about-content');
+        const aboutSection = aboutContent?.parentElement;
+        if (!isHidden && aboutContent && !aboutContent.classList.contains('hidden')) {
+          aboutContent.classList.add('hidden');
+          if (aboutSection) aboutSection.classList.remove('active');
+        }
+        this.vibrate(10);
+      });
+    }
+  },
+
   setupMenuEventListeners() {
     // Dashboard actions
     const vsCompBtn = document.getElementById('dashboard-vs-computer-btn');
     const passPlayBtn = document.getElementById('dashboard-pass-play-btn');
     
-    // Profiles modal actions
+    // Profile screen navigation
     const profileBtn = document.getElementById('profile-btn');
-    const profileModal = document.getElementById('profile-modal');
-    const profileCloseBtn = document.getElementById('profile-close-btn');
-    const profileOkBtn = document.getElementById('profile-ok-btn');
-
-    if (profileBtn && profileModal) {
+    if (profileBtn) {
       profileBtn.addEventListener('click', () => {
-        profileModal.classList.add('active');
+        this.transitionToScreen('profile');
+        this.vibrate(15);
       });
     }
-    [profileCloseBtn, profileOkBtn, profileModal].forEach(el => {
-      if (el) {
-        el.addEventListener('click', (e) => {
-          if (e.target === el || el === profileCloseBtn || el === profileOkBtn) {
-            profileModal.classList.remove('active');
-          }
-        });
-      }
-    });
+
+    const backProfileBtn = document.getElementById('back-to-dashboard-profile');
+    if (backProfileBtn) {
+      backProfileBtn.addEventListener('click', () => {
+        this.transitionToScreen('dashboard');
+        this.vibrate(15);
+        // Collapse accordions when leaving profile screen
+        const aboutContent = document.getElementById('settings-about-content');
+        const aboutSection = aboutContent?.parentElement;
+        const privacyContent = document.getElementById('settings-privacy-content');
+        const privacySection = privacyContent?.parentElement;
+        if (aboutContent) aboutContent.classList.add('hidden');
+        if (aboutSection) aboutSection.classList.remove('active');
+        if (privacyContent) privacyContent.classList.add('hidden');
+        if (privacySection) privacySection.classList.remove('active');
+      });
+    }
 
     if (vsCompBtn) {
       vsCompBtn.addEventListener('click', () => {
@@ -738,7 +857,8 @@ const Game = {
       dashboard: this.screens.dashboard,
       'setup-computer': this.screens.setupComputer,
       'setup-pass-play': this.screens.setupPassPlay,
-      game: this.screens.game
+      game: this.screens.game,
+      profile: this.screens.profile
     };
 
     const activeScreen = screensMap[screenName];
@@ -944,7 +1064,7 @@ const Game = {
         circle.setAttribute('cx', x);
         circle.setAttribute('cy', y);
         circle.setAttribute('r', dotRadius);
-        circle.setAttribute('class', 'board-dot');
+        circle.setAttribute('class', `board-dot dot-style-${this.dotStyle}`);
         circle.setAttribute('id', `dot-${r}-${c}`);
         svg.appendChild(circle);
       }
@@ -974,6 +1094,13 @@ const Game = {
 
     // Check box completions
     const boxesCompleted = this.checkBoxCompletion(type, r, c);
+
+    // Trigger haptic vibration feedback
+    if (boxesCompleted.length > 0) {
+      this.vibrate([25, 45, 25]);
+    } else {
+      this.vibrate(15);
+    }
 
     // Record this move to the history stack BEFORE updating scores and turn
     this.history.push({
@@ -1426,6 +1553,7 @@ const Game = {
           .replace('{loser}', this.p2Name);
       }
       this.sounds.playWin();
+      this.vibrate([100, 100, 100, 100, 200]);
     } else if (this.p2Score > this.p1Score) {
       title.textContent = `${this.p2Name} Wins!`;
       if (this.gameMode === 'ai') {
@@ -1433,6 +1561,7 @@ const Game = {
         const msgs = this.funnyTexts.aiLoss;
         subtitle.textContent = msgs[Math.floor(Math.random() * msgs.length)];
         this.sounds.playLoss();
+        this.vibrate([300, 150, 300]);
       } else {
         animType = 'win';
         const msgs = this.funnyTexts.pvpWin;
@@ -1440,6 +1569,7 @@ const Game = {
           .replace('{winner}', this.p2Name)
           .replace('{loser}', this.p1Name);
         this.sounds.playWin();
+        this.vibrate([100, 100, 100, 100, 200]);
       }
     } else {
       title.textContent = "It's a Draw!";
@@ -1453,6 +1583,7 @@ const Game = {
         subtitle.textContent = msgs[Math.floor(Math.random() * msgs.length)];
       }
       this.sounds.playTie();
+      this.vibrate([150, 150, 150]);
     }
 
     // Record matchup results (PVP or AI)
