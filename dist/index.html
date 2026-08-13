@@ -3,45 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Dots and Boxes - Modern Play</title>
+  <title>Dot Box - Premium Dots & Boxes Game</title>
   <!-- SEO Meta Tags -->
-  <meta name="description" content="Play the ultimate, premium Dots and Boxes game online. Challenge a friend or test your skills against our smart AI. Responsive design, beautiful animations, and synthesized audio!">
+  <meta name="description" content="Play the ultimate, premium Dot Box (Dots and Boxes) game. Challenge a friend in Pass & Play or test your skills against our smart AI. Premium animations, custom skins, and haptic feedback.">
   <meta name="keywords" content="dots and boxes, online game, board game, local multiplayer, AI opponent, web game, responsive">
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Stylesheets -->
-  <script type="module" crossorigin src="/assets/index-LRYAnkmU.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-Dx9myRgL.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Stylesheets -->
+  <script type="module" crossorigin src="/assets/index-f2ya-8yK.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DAnomlal.css">
 </head>
 <body>
-  <!-- Dynamic Background Gradients -->
+  <!-- Dynamic Background Blurs -->
   <div class="bg-blur bg-blur-1"></div>
   <div class="bg-blur bg-blur-2"></div>
   <div class="bg-grid-pattern"></div>
   
-  <!-- Faint decorative background connecting lines -->
-  <svg class="bg-decorations" viewBox="0 0 100 100" preserveAspectRatio="none">
-    <line class="bg-line line-1" x1="15" y1="20" x2="45" y2="20" />
-    <line class="bg-line line-2" x1="75" y1="40" x2="75" y2="75" />
-    <line class="bg-line line-3" x1="25" y1="70" x2="60" y2="70" />
-  </svg>
-
   <div class="app-container">
-    <!-- SCREEN 1: DASHBOARD (HOME) -->
+    
+    <!-- ================= SCREEN 1: DASHBOARD ================= -->
     <section id="dashboard-screen" class="screen active">
+      <!-- Main Dashboard Header (Image 1 Style) -->
       <div class="dashboard-header-group">
         <div class="menu-top-header">
           <button id="profile-btn" class="profile-btn" aria-label="View Profile">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
+            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23dbeafe'/><circle cx='50' cy='42' r='20' fill='%231e3a8a'/><path d='M20 80c0-18 15-25 30-25s30 7 30 25z' fill='%231e3a8a'/><path d='M30 40c2-5 8-5 10 0s3 8 0 10-8 3-10 0-3-7 0-10z' fill='%23fca5a5'/></svg>" alt="Avatar" class="avatar-img-small">
           </button>
-          <span class="app-title">Dot Box</span>
+          
+          <div class="app-title-group">
+            <span class="app-title-dot">DOT</span>
+            <span class="app-title-box">BOX</span>
+          </div>
+          
           <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle Theme">
-            <svg class="sun-icon hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="sun-icon hidden" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="5"></circle>
               <line x1="12" y1="1" x2="12" y2="3"></line>
               <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -52,285 +49,428 @@
               <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
               <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
             </svg>
-            <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="moon-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
             </svg>
           </button>
         </div>
-        <p class="dashboard-tagline">Classic dots & boxes — play solo or with a friend.</p>
       </div>
 
-      <!-- Player Progression Section -->
-      <div class="player-progression-card">
-        <div class="progression-header">
-          <div class="progression-avatar-wrap">
-            <span class="progression-avatar-emoji" id="dash-avatar-emoji">👤</span>
-          </div>
-          <div class="progression-details">
-            <div class="progression-level-info">
-              <span class="progression-level-badge">LVL <span id="dash-level-val">1</span></span>
-              <span class="progression-title" id="dash-title-val">Beginner</span>
+      <!-- Tab Content Container -->
+      <div class="tab-content-container">
+        
+        <!-- --- TAB 1: HOME --- -->
+        <div id="tab-home" class="tab-pane active">
+          <!-- Level & BP Card (Image 1 Design) -->
+          <div class="level-bp-card">
+            <div class="level-column">
+              <div class="shield-icon-container">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="shield-svg">
+                  <path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm0 6l2 4h4l-3 2.5 1 4.5-4-3-4 3 1-4.5L6 12h4l2-4z"/>
+                </svg>
+              </div>
+              <div class="level-details">
+                <span class="level-title">Level <span id="dash-level-val">5</span></span>
+                <span class="level-subtitle" id="dash-title-val">Grid Master</span>
+              </div>
             </div>
-            <div class="progression-bp-wrap">
-              <svg class="bp-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                <circle cx="12" cy="12" r="4"></circle>
+            <div class="card-vertical-divider"></div>
+            <div class="bp-column">
+              <div class="star-icon-container">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="star-svg">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+              </div>
+              <div class="bp-details">
+                <span class="bp-title"><span id="dash-bp-val">1,240</span> BP</span>
+                <span class="bp-subtitle" id="dash-bp-sub">1,240 / 1,500 to Level 6</span>
+              </div>
+            </div>
+            <div class="level-progress-bar-container">
+              <div class="level-progress-bar-fill" id="dash-level-progress-fill" style="width: 82.6%"></div>
+            </div>
+          </div>
+
+          <!-- Symmetrical Decorative Board Preview & Background Accents (Image 1 Center) -->
+          <div class="board-preview-container">
+            <!-- Decorative dots grids & diagonals -->
+            <div class="decor-dot-grid decor-left"></div>
+            <div class="decor-dot-grid decor-right"></div>
+            <div class="decor-diagonal-lines">
+              <div class="diagonal-line"></div>
+              <div class="diagonal-line"></div>
+              <div class="diagonal-line"></div>
+            </div>
+            
+            <div class="board-preview-wrapper">
+              <svg class="board-preview-svg" viewBox="0 0 200 200">
+                <!-- Shaded Boxes -->
+                <!-- Middle blue shaded cell (1, 1) -->
+                <rect x="77" y="77" width="45" height="45" fill="rgba(63, 71, 224, 0.15)" rx="4"/>
+                <!-- Bottom right red shaded cell (2, 2) -->
+                <rect x="122" y="122" width="45" height="45" fill="rgba(239, 68, 68, 0.12)" rx="4"/>
+                
+                <!-- Symmetrical Dashed Grid Lines -->
+                <!-- Horizontal grid rows -->
+                <line x1="32" y1="32" x2="167" y2="32" stroke="rgba(0, 0, 0, 0.05)" stroke-width="2" stroke-dasharray="3,3" />
+                <line x1="32" y1="77" x2="167" y2="77" stroke="rgba(0, 0, 0, 0.05)" stroke-width="2" stroke-dasharray="3,3" />
+                <line x1="32" y1="122" x2="167" y2="122" stroke="rgba(0, 0, 0, 0.05)" stroke-width="2" stroke-dasharray="3,3" />
+                <line x1="32" y1="167" x2="167" y2="167" stroke="rgba(0, 0, 0, 0.05)" stroke-width="2" stroke-dasharray="3,3" />
+                <!-- Vertical grid columns -->
+                <line x1="32" y1="32" x2="32" y2="167" stroke="rgba(0, 0, 0, 0.05)" stroke-width="2" stroke-dasharray="3,3" />
+                <line x1="77" y1="32" x2="77" y2="167" stroke="rgba(0, 0, 0, 0.05)" stroke-width="2" stroke-dasharray="3,3" />
+                <line x1="122" y1="32" x2="122" y2="167" stroke="rgba(0, 0, 0, 0.05)" stroke-width="2" stroke-dasharray="3,3" />
+                <line x1="167" y1="32" x2="167" y2="167" stroke="rgba(0, 0, 0, 0.05)" stroke-width="2" stroke-dasharray="3,3" />
+
+                <!-- Solid Active Lines -->
+                <!-- Top Box blue outline -->
+                <line x1="77" y1="32" x2="122" y2="32" stroke="#3f47e0" stroke-width="3" stroke-linecap="round" />
+                <line x1="77" y1="32" x2="77" y2="77" stroke="#3f47e0" stroke-width="3" stroke-linecap="round" />
+                <line x1="122" y1="32" x2="122" y2="77" stroke="#3f47e0" stroke-width="3" stroke-linecap="round" />
+                <!-- Middle Box blue outline -->
+                <line x1="77" y1="77" x2="122" y2="77" stroke="#3f47e0" stroke-width="3" stroke-linecap="round" />
+                <line x1="77" y1="77" x2="77" y2="122" stroke="#3f47e0" stroke-width="3" stroke-linecap="round" />
+                <line x1="122" y1="77" x2="122" y2="122" stroke="#3f47e0" stroke-width="3" stroke-linecap="round" />
+                <line x1="77" y1="122" x2="122" y2="122" stroke="#3f47e0" stroke-width="3" stroke-linecap="round" />
+                
+                <!-- Bottom Right Box red outline -->
+                <line x1="122" y1="122" x2="167" y2="122" stroke="#ef4444" stroke-width="3" stroke-linecap="round" />
+                <line x1="122" y1="122" x2="122" y2="167" stroke="#ef4444" stroke-width="3" stroke-linecap="round" />
+                <line x1="167" y1="122" x2="167" y2="167" stroke="#ef4444" stroke-width="3" stroke-linecap="round" />
+                <line x1="122" y1="167" x2="167" y2="167" stroke="#ef4444" stroke-width="3" stroke-linecap="round" />
+
+                <!-- Dots Grid (4x4) -->
+                <!-- Row 0 -->
+                <circle cx="32" cy="32" r="5" fill="#1e293b" />
+                <circle cx="77" cy="32" r="5" fill="#1e293b" />
+                <circle cx="122" cy="32" r="5" fill="#1e293b" />
+                <circle cx="167" cy="32" r="5" fill="#1e293b" />
+                <!-- Row 1 -->
+                <circle cx="32" cy="77" r="5" fill="#1e293b" />
+                <circle cx="77" cy="77" r="5" fill="#1e293b" />
+                <circle cx="122" cy="77" r="5" fill="#1e293b" />
+                <circle cx="167" cy="77" r="5" fill="#1e293b" />
+                <!-- Row 2 -->
+                <circle cx="32" cy="122" r="5" fill="#1e293b" />
+                <circle cx="77" cy="122" r="5" fill="#1e293b" />
+                <circle cx="122" cy="122" r="5" fill="#1e293b" />
+                <circle cx="167" cy="122" r="5" fill="#1e293b" />
+                <!-- Row 3 -->
+                <circle cx="32" cy="167" r="5" fill="#1e293b" />
+                <circle cx="77" cy="167" r="5" fill="#1e293b" />
+                <circle cx="122" cy="167" r="5" fill="#1e293b" />
+                <circle cx="167" cy="167" r="5" fill="#1e293b" />
               </svg>
-              <span class="bp-count"><span id="dash-bp-val">240</span> BP</span>
+            </div>
+          </div>
+
+          <!-- Play Modes Actions Stack (Image 1 Style) -->
+          <div class="home-actions-group">
+            <!-- Pass & Play Button (Gradient Blue) -->
+            <button id="dashboard-pass-play-btn" class="menu-action-btn pvp-gradient-btn">
+              <div class="btn-left-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              </div>
+              <div class="btn-text-content">
+                <span class="btn-title">PASS & PLAY</span>
+                <span class="btn-subtitle">Play with a friend</span>
+              </div>
+              <div class="btn-right-chevron">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </button>
+
+            <!-- vs Computer Button (Light Grey/Blue) -->
+            <button id="dashboard-vs-computer-btn" class="menu-action-btn vs-ai-btn">
+              <div class="btn-left-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <rect x="3" y="11" width="18" height="10" rx="2"/>
+                  <circle cx="12" cy="5" r="2"/>
+                  <path d="M12 7v4"/>
+                  <line x1="8" y1="16" x2="8" y2="16"/>
+                  <line x1="16" y1="16" x2="16" y2="16"/>
+                </svg>
+              </div>
+              <div class="btn-text-content">
+                <span class="btn-title">VS COMPUTER</span>
+                <span class="btn-subtitle">Challenge the AI</span>
+              </div>
+              <div class="btn-right-chevron">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </button>
+          </div>
+
+          <!-- Secondary Side-by-Side Actions (Image 1 Style) -->
+          <div class="secondary-actions-row">
+            <button id="daily-challenge-preview-btn" class="sec-card-btn">
+              <div class="sec-btn-icon calendar-btn-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+              </div>
+              <span class="sec-btn-label">Daily Challenge</span>
+              <div class="notification-dot" id="dash-challenge-dot"></div>
+            </button>
+
+            <button id="view-leaderboard-btn" class="sec-card-btn">
+              <div class="sec-btn-icon leaderboard-btn-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="18" y1="20" x2="18" y2="10"/>
+                  <line x1="12" y1="20" x2="12" y2="4"/>
+                  <line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>
+              </div>
+              <span class="sec-btn-label">Leaderboard</span>
+              <div class="notification-dot" id="dash-leaderboard-dot"></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- --- TAB 2: DAILY CHALLENGE (Image 2 Screen 2 Style) --- -->
+        <div id="tab-daily" class="tab-pane">
+          <div class="tab-scroll-container">
+            <div class="daily-main-card">
+              <div class="daily-icon-header">
+                <svg class="daily-calendar-star" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#3f47e0" stroke-width="1.5">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                  <!-- Star symbol in middle -->
+                  <polygon points="12 12 13.5 15 16.5 15 14 17 15 20 12 18.5 9 20 10 17 7.5 15 10.5 15" fill="#fbbf24" stroke="none"/>
+                </svg>
+              </div>
+              
+              <div class="daily-challenge-details">
+                <h2 id="daily-detail-challenge-desc" class="daily-mission-title">Complete 20 Boxes</h2>
+                <span class="daily-mission-subtitle">Today's Challenge</span>
+                <span id="daily-detail-date-str" class="daily-date-badge">August 13, 2026</span>
+              </div>
+              
+              <!-- Progress Indicator -->
+              <div class="daily-progress-container">
+                <div class="daily-progress-bar-bg">
+                  <div id="daily-detail-progress-fill" class="daily-progress-bar-fill" style="width: 60%;"></div>
+                </div>
+                <span id="daily-detail-status" class="daily-progress-text">12 / 20</span>
+              </div>
+            </div>
+
+            <!-- Reward Card -->
+            <div class="reward-strip-card">
+              <span class="reward-label">Reward</span>
+              <div class="reward-val-group">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#fbbf24" stroke="none">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                <span id="daily-detail-reward" class="reward-value-text">+100 BP</span>
+              </div>
+            </div>
+
+            <!-- Play Challenge Button -->
+            <button id="daily-play-btn" class="primary-btn large-btn full-width-btn">
+              <span>PLAY CHALLENGE</span>
+            </button>
+
+            <!-- Streak Panel -->
+            <div class="streak-panel">
+              <span class="streak-title">5 Day Streak</span>
+              <div class="streak-dots-row">
+                <div class="streak-dot-circle active"><span class="check-mark">✓</span></div>
+                <div class="streak-dot-circle active"><span class="check-mark">✓</span></div>
+                <div class="streak-dot-circle active"><span class="check-mark">✓</span></div>
+                <div class="streak-dot-circle active"><span class="check-mark">✓</span></div>
+                <div class="streak-dot-circle"><span class="check-mark"></span></div>
+              </div>
+              <span id="daily-streak-desc" class="streak-sub-text">You are on a 4-day streak!</span>
             </div>
           </div>
         </div>
-        <div class="progression-progress-section">
-          <div class="progression-bar-bg">
-            <div class="progression-bar-fill" id="dash-progress-fill" style="width: 48%;"></div>
-          </div>
-          <div class="progression-bar-labels">
-            <span id="dash-progress-text">240 / 500 BP to next level</span>
+
+        <!-- --- TAB 3: PROFILE (Image 2 Screen 9 Style) --- -->
+        <div id="tab-profile" class="tab-pane">
+          <div class="tab-scroll-container">
+            <!-- Header buttons group: settings icon -->
+            <div class="profile-header-actions">
+              <button id="profile-settings-cog" class="profile-icon-action-btn" aria-label="Open Settings">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Profile Info Card -->
+            <div class="profile-details-card">
+              <div class="avatar-edit-container">
+                <div class="avatar-large-circle" id="profile-avatar-emoji-val">
+                  <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23dbeafe'/><circle cx='50' cy='42' r='20' fill='%231e3a8a'/><path d='M20 80c0-18 15-25 30-25s30 7 30 25z' fill='%231e3a8a'/><path d='M30 40c2-5 8-5 10 0s3 8 0 10-8 3-10 0-3-7 0-10z' fill='%23fca5a5'/></svg>" alt="Guest Avatar" class="profile-avatar-image">
+                </div>
+                <button class="edit-pencil-btn" aria-label="Edit Name">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                  </svg>
+                </button>
+              </div>
+              
+              <h2 class="profile-user-name">Guest Player</h2>
+              <span id="profile-level-str" class="profile-level-badge">Level 5 • Grid Master</span>
+              
+              <div class="profile-xp-progress-group">
+                <div class="profile-xp-bar-bg">
+                  <div class="profile-xp-bar-fill" id="profile-xp-bar-fill" style="width: 82.6%"></div>
+                </div>
+                <span id="profile-bp-val-str" class="profile-xp-text">1,240 / 1,500 XP</span>
+              </div>
+            </div>
+
+            <!-- Stats Grid (3x2 Layout - Image 2 Screen 9) -->
+            <div class="stats-grid">
+              <div class="stat-card">
+                <span class="stat-lbl">Games Played</span>
+                <span class="stat-val" id="stats-games-played">24</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-lbl">Wins</span>
+                <span class="stat-val" id="stats-wins">16</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-lbl">Win Rate</span>
+                <span class="stat-val" id="stats-win-rate">66%</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-lbl">Boxes Completed</span>
+                <span class="stat-val" id="stats-boxes-completed">342</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-lbl">Best Score</span>
+                <span class="stat-val" id="stats-best-score">18</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-lbl">Max Streak</span>
+                <span class="stat-val" id="stats-max-streak">5</span>
+              </div>
+            </div>
+
+            <!-- Menu Rows Stack (Image 2 Screen 9) -->
+            <div class="profile-menu-stack">
+              <button id="profile-menu-vault" class="menu-item-row">
+                <span class="menu-row-label">Box Vault</span>
+                <svg class="chevron-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+              
+              <button id="profile-menu-achievements" class="menu-item-row">
+                <span class="menu-row-label">Achievements</span>
+                <svg class="chevron-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+              
+              <button id="profile-menu-settings" class="menu-item-row">
+                <span class="menu-row-label">Settings</span>
+                <svg class="chevron-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
+
       </div>
 
-      <div class="dashboard-actions-group">
-        <div class="dashboard-buttons">
-          <button id="dashboard-pass-play-btn" class="primary-btn medium-btn">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-            <span>Pass & Play</span>
-          </button>
-          <button id="dashboard-vs-computer-btn" class="secondary-btn medium-btn">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-              <line x1="8" y1="21" x2="16" y2="21"></line>
-              <line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg>
-            <span>vs Computer</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Daily Challenge Card -->
-      <div class="daily-challenge-card">
-        <div class="challenge-header">
-          <div class="challenge-title-group">
-            <span class="challenge-badge">DAILY CHALLENGE</span>
-            <span class="challenge-reward" id="dash-challenge-reward">+100 BP</span>
-          </div>
-          <span class="challenge-status" id="dash-challenge-status">0/1</span>
-        </div>
-        <div class="challenge-body">
-          <p class="challenge-desc" id="dash-challenge-desc">Win a game vs Computer</p>
-          <div class="challenge-progress-bar-bg">
-            <div class="challenge-progress-bar-fill" id="dash-challenge-progress-fill" style="width: 0%;"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- View Leaderboard Row -->
-      <div class="leaderboard-row" style="width: 100%; display: flex; justify-content: center; margin-top: 4px;">
-        <button id="view-leaderboard-btn" class="leaderboard-link-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 20V10"></path>
-            <path d="M18 20V4"></path>
-            <path d="M6 20v-4"></path>
+      <!-- Bottom Floating Nav Bar (Image 1/2 Design) -->
+      <div class="bottom-nav">
+        <button class="nav-item active" data-tab="home">
+          <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
           </svg>
-          <span>VIEW LEADERBOARD</span>
+          <span>Home</span>
+        </button>
+        <button class="nav-item" data-tab="daily">
+          <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+            <polyline points="9 14 11 16 15 12"/>
+          </svg>
+          <span>Daily</span>
+        </button>
+        <button class="nav-item" data-tab="profile">
+          <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span>Profile</span>
         </button>
       </div>
     </section>
 
-    <!-- SCREEN 2A: SETUP — VS COMPUTER -->
-    <section id="setup-computer-screen" class="screen">
-      <div class="menu-top-header">
-        <button id="back-to-dashboard-ai" class="icon-back-btn" aria-label="Go Back">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-        </button>
-        <span class="screen-title">Game Setup</span>
-        <div style="width: 40px;"></div> <!-- Spacer to center title -->
-      </div>
-
-      <div class="setup-scroll-container">
-        <!-- Difficulty Selection -->
-        <div class="setup-section">
-          <span class="setup-section-label">Difficulty</span>
-          <div class="card-selector-row" id="ai-difficulty-control">
-            <button class="selector-card" data-difficulty="easy">
-              <span class="card-label">Easy</span>
-              <div class="stars-row">
-                <svg class="star-icon filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                <svg class="star-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                <svg class="star-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-              </div>
-            </button>
-            <button class="selector-card active" data-difficulty="medium">
-              <span class="card-label">Medium</span>
-              <div class="stars-row">
-                <svg class="star-icon filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                <svg class="star-icon filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                <svg class="star-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-              </div>
-            </button>
-            <button class="selector-card" data-difficulty="hard">
-              <span class="card-label">Hard</span>
-              <div class="stars-row">
-                <svg class="star-icon filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                <svg class="star-icon filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                <svg class="star-icon filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        <!-- Grid Size Selection -->
-        <div class="setup-section">
-          <span class="setup-section-label">Grid Size</span>
-          <div class="card-selector-row" id="ai-size-control">
-            <button class="selector-card" data-size="3">
-              <div class="dot-grid-preview grid-3">
-                <span></span><span></span><span></span>
-                <span></span><span></span><span></span>
-                <span></span><span></span><span></span>
-              </div>
-              <span class="card-label">3x3</span>
-            </button>
-            <button class="selector-card active" data-size="5">
-              <div class="dot-grid-preview grid-5">
-                <span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span>
-              </div>
-              <span class="card-label">5x5</span>
-            </button>
-            <button class="selector-card" data-size="7">
-              <div class="dot-grid-preview grid-7">
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-              </div>
-              <span class="card-label">7x7</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Color Pickers -->
-        <div class="setup-section">
-          <span class="setup-section-label">Colors</span>
-          <div class="colors-setup-split">
-            <!-- You -->
-            <div class="player-color-column">
-              <span class="column-name">You</span>
-              <div class="selected-color-preview shadow-sm" id="ai-p1-preview-dot"></div>
-              <div class="color-options-row" id="ai-p1-color-palette">
-                <!-- Filled in JS -->
-              </div>
-            </div>
-            <!-- Computer -->
-            <div class="player-color-column">
-              <span class="column-name">AI Opponent</span>
-              <div class="selected-color-preview shadow-sm" id="ai-p2-preview-dot"></div>
-              <div class="color-options-row" id="ai-p2-color-palette">
-                <!-- Filled in JS -->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="setup-footer">
-        <button id="start-computer-game-btn" class="primary-btn large-btn">
-          <span>Start Game</span>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </button>
-      </div>
-    </section>
-
-    <!-- SCREEN 2B: SETUP — PASS & PLAY -->
+    <!-- ================= SCREEN 2: SETUP — PASS & PLAY ================= -->
     <section id="setup-pass-play-screen" class="screen">
       <div class="menu-top-header">
         <button id="back-to-dashboard-pvp" class="icon-back-btn" aria-label="Go Back">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
         </button>
-        <span class="screen-title">Game Setup</span>
-        <div style="width: 40px;"></div> <!-- Spacer to center title -->
+        <span class="screen-title">PASS & PLAY</span>
+        <div style="width: 40px;"></div> <!-- Spacer -->
       </div>
 
       <div class="setup-scroll-container">
-        <!-- Grid Size Selection for PvP -->
+        <!-- Grid Size Selection -->
         <div class="setup-section">
           <span class="setup-section-label">Grid Size</span>
-          <div class="card-selector-row" id="pvp-size-control">
-            <button class="selector-card" data-size="3">
-              <div class="dot-grid-preview grid-3">
-                <span></span><span></span><span></span>
-                <span></span><span></span><span></span>
-                <span></span><span></span><span></span>
-              </div>
-              <span class="card-label">3x3</span>
-            </button>
-            <button class="selector-card active" data-size="5">
-              <div class="dot-grid-preview grid-5">
-                <span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span>
-              </div>
-              <span class="card-label">5x5</span>
-            </button>
-            <button class="selector-card" data-size="7">
-              <div class="dot-grid-preview grid-7">
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-              </div>
-              <span class="card-label">7x7</span>
-            </button>
+          <div class="pill-selector-row" id="pvp-size-control">
+            <button class="selector-pill" data-size="3">3×3</button>
+            <button class="selector-pill active" data-size="5">5×5</button>
+            <button class="selector-pill" data-size="7">7×7</button>
           </div>
         </div>
 
+        <!-- Players details customization card -->
         <div class="setup-section">
-          <span class="setup-section-label">Players</span>
+          <span class="setup-section-label">Players Setup</span>
           <div class="players-setup-container">
-            <!-- Player 1 Customize Row -->
-            <div class="player-setup-card">
+            <!-- Player 1 Setup Card -->
+            <div class="player-setup-card card-blue-border">
+              <span class="player-card-label-small">Player 1</span>
               <div class="player-header-row">
-                <div class="selected-color-preview shadow-sm" id="pvp-p1-preview-dot"></div>
-                <input type="text" id="pvp-p1-name-input" class="custom-name-input" value="" placeholder="Player 1" maxlength="12">
+                <div class="selected-color-preview" id="pvp-p1-preview-dot"></div>
+                <input type="text" id="pvp-p1-name-input" class="custom-name-input" value="Player One" placeholder="Player 1" maxlength="12">
               </div>
-              <div class="card-divider"></div>
               <div class="color-options-row" id="pvp-p1-color-palette">
-                <!-- Filled in JS -->
+                <!-- Filled dynamically in game.js -->
               </div>
             </div>
 
-            <!-- Player 2 Customize Row -->
-            <div class="player-setup-card">
+            <!-- Player 2 Setup Card -->
+            <div class="player-setup-card card-red-border">
+              <span class="player-card-label-small">Player 2</span>
               <div class="player-header-row">
-                <div class="selected-color-preview shadow-sm" id="pvp-p2-preview-dot"></div>
-                <input type="text" id="pvp-p2-name-input" class="custom-name-input" value="" placeholder="Player 2" maxlength="12">
+                <div class="selected-color-preview" id="pvp-p2-preview-dot"></div>
+                <input type="text" id="pvp-p2-name-input" class="custom-name-input" value="Player Two" placeholder="Player 2" maxlength="12">
               </div>
-              <div class="card-divider"></div>
               <div class="color-options-row" id="pvp-p2-color-palette">
-                <!-- Filled in JS -->
+                <!-- Filled dynamically in game.js -->
               </div>
             </div>
           </div>
@@ -338,246 +478,568 @@
       </div>
 
       <div class="setup-footer">
-        <button id="start-pass-play-btn" class="primary-btn large-btn">
-          <span>Start Game</span>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        <button id="start-pass-play-btn" class="primary-btn large-btn full-width-btn">
+          <span>START GAME</span>
         </button>
       </div>
     </section>
 
-    <!-- SCREEN 3: PROFILE & SETTINGS -->
-    <section id="profile-screen" class="screen">
+    <!-- ================= SCREEN 3: SETUP — VS COMPUTER ================= -->
+    <section id="setup-computer-screen" class="screen">
       <div class="menu-top-header">
-        <button id="back-to-dashboard-profile" class="icon-back-btn" aria-label="Go Back">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <button id="back-to-dashboard-ai" class="icon-back-btn" aria-label="Go Back">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
         </button>
-        <span class="screen-title">Profile & Settings</span>
-        <div style="width: 40px;"></div> <!-- Spacer to center title -->
+        <span class="screen-title">VS COMPUTER</span>
+        <div style="width: 40px;"></div> <!-- Spacer -->
       </div>
 
       <div class="setup-scroll-container">
-        <!-- Profile Card -->
-        <div class="profile-card-container">
-          <div class="profile-avatar-large">🏆</div>
-          <div class="profile-name">Guest Player</div>
-          <div class="profile-level">Level 5 - Box Collector</div>
-          <div class="card-divider" style="margin: 14px 0;"></div>
-          <p class="profile-brief">
-            Your career stats and achievements are tracked automatically. Adjust your preferences below.
-          </p>
+        <!-- Grid Size Selection -->
+        <div class="setup-section">
+          <span class="setup-section-label">Grid Size</span>
+          <div class="pill-selector-row" id="ai-size-control">
+            <button class="selector-pill" data-size="3">3×3</button>
+            <button class="selector-pill active" data-size="5">5×5</button>
+            <button class="selector-pill" data-size="7">7×7</button>
+          </div>
         </div>
 
-        <!-- Settings Section Label -->
-        <span class="setup-section-label" style="margin-top: 24px;">Preferences</span>
+        <!-- Difficulty Selection -->
+        <div class="setup-section">
+          <span class="setup-section-label">Difficulty</span>
+          <div class="pill-selector-row" id="ai-difficulty-control">
+            <button class="selector-pill" data-difficulty="easy">Easy</button>
+            <button class="selector-pill active" data-difficulty="medium">Medium</button>
+            <button class="selector-pill" data-difficulty="hard">Hard</button>
+          </div>
+        </div>
 
-        <!-- Settings Content directly on the screen -->
-        <div class="settings-content" style="text-align: left; width: 100%;">
-          <!-- Sound Toggle -->
-          <div class="setting-item">
-            <div class="setting-info">
-              <span class="setting-title">Sound Effects</span>
-              <span class="setting-desc">Play synthesized sound effects</span>
+        <!-- Player Color Setup -->
+        <div class="setup-section">
+          <span class="setup-section-label">Your Color</span>
+          <div class="player-color-picker-box">
+            <div class="color-picker-header-row">
+              <div class="selected-color-preview" id="ai-p1-preview-dot"></div>
+              <span class="color-picker-label">Choose color theme for your moves</span>
             </div>
-            <label class="switch-container">
-              <input type="checkbox" id="settings-sound-toggle" checked>
-              <span class="switch-slider"></span>
-            </label>
-          </div>
-          
-          <!-- Haptic Feedback Toggle -->
-          <div class="setting-item">
-            <div class="setting-info">
-              <span class="setting-title">Haptic Feedback</span>
-              <span class="setting-desc">Vibrate on moves and scores</span>
-            </div>
-            <label class="switch-container">
-              <input type="checkbox" id="settings-haptics-toggle" checked>
-              <span class="switch-slider"></span>
-            </label>
-          </div>
-          
-          <!-- Board Dot Style Selection -->
-          <div class="setting-item flex-column">
-            <div class="setting-info" style="margin-bottom: 4px;">
-              <span class="setting-title">Board Dot Style</span>
-              <span class="setting-desc">Choose visual style of the grid dots</span>
-            </div>
-            <div class="segmented-control settings-dot-style-control" style="width: 100%; margin-top: 6px;">
-              <button data-dot-style="classic">Classic</button>
-              <button data-dot-style="neon">Neon Glow</button>
-              <button data-dot-style="hollow">Hollow Ring</button>
-            </div>
-          </div>
-
-          <div class="card-divider" style="margin: 16px 0;"></div>
-          
-          <!-- About Accordion -->
-          <div class="settings-expandable-section">
-            <button id="settings-about-trigger" class="expandable-header">
-              <span>About Game</span>
-              <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </button>
-            <div id="settings-about-content" class="expandable-content hidden">
-              <p><strong>Dot Box</strong> is a polished, modern digital version of the classic pencil-and-paper game Dots and Boxes.</p>
-              <p style="margin-top: 6px;">Challenge your strategy skills against a multi-level simulated AI, or compete locally in head-to-head Pass & Play matches with integrated win-loss scorecards.</p>
-              <p style="margin-top: 8px; font-size: 0.8rem; color: var(--text-muted);">Version 1.0.0 &bull; Powered by HTML5, CSS3, and JS.</p>
-            </div>
-          </div>
-          
-          <!-- Privacy Policy Accordion -->
-          <div class="settings-expandable-section" style="margin-top: 10px; margin-bottom: 24px;">
-            <button id="settings-privacy-trigger" class="expandable-header">
-              <span>Privacy Policy</span>
-              <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </button>
-            <div id="settings-privacy-content" class="expandable-content hidden">
-              <p>We respect your privacy. <strong>Dot Box</strong> operates fully local to your device:</p>
-              <ul style="margin-left: 16px; margin-top: 6px; font-size: 0.82rem; line-height: 1.45;">
-                <li>No personal data or stats are shared or sent online.</li>
-                <li>Everything is persisted locally via Web LocalStorage.</li>
-                <li>Zero telemetry, trackers, or cookies are collected.</li>
-              </ul>
+            <div class="color-options-row" id="ai-p1-color-palette">
+              <!-- Populated dynamically in game.js -->
             </div>
           </div>
         </div>
+
+        <!-- Opponent Color indicator -->
+        <div class="computer-opponent-card">
+          <span class="computer-card-title">Computer will play as</span>
+          <div class="selected-color-preview" id="ai-p2-preview-dot"></div>
+          <!-- Hidden storage element to connect with game.js palettes -->
+          <div id="ai-p2-color-palette" style="display:none;"></div>
+        </div>
+      </div>
+
+      <div class="setup-footer">
+        <button id="start-computer-game-btn" class="primary-btn large-btn full-width-btn">
+          <span>START GAME</span>
+        </button>
       </div>
     </section>
 
-    <!-- GAME SCREEN -->
+    <!-- ================= SCREEN 4: GAMEPLAY SCREEN ================= -->
     <section id="game-screen" class="screen">
-      <!-- Game Top Header Controls -->
-      <div class="game-top-header">
-        <button id="back-to-menu-btn" class="icon-back-btn" title="Exit to Menu" aria-label="Exit to Menu">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-        </button>
-        <div class="game-title">Dots & Boxes</div>
-        <button class="mute-btn icon-btn" title="Toggle Sound" aria-label="Toggle Sound">
-          <svg class="mute-icon-sound" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-          <svg class="mute-icon-silence hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
-        </button>
-      </div>
-
-      <!-- Scoreboard Row with central Turn pill indicator -->
+      <!-- Gameplay scoreboard (Image 2 style) -->
       <div class="game-scoreboard-row">
-        <div class="player-score-col left" id="p1-card">
-          <span class="player-score-label" id="p1-name-display">PLAYER 1</span>
-          <span class="player-score-value" id="p1-score-display">0</span>
+        <!-- Left player card -->
+        <div class="player-score-col left active" id="p1-card">
+          <div class="player-color-indicator dot-style-blue" id="p1-dot-color"></div>
+          <div class="score-details-wrapper">
+            <span class="player-score-label" id="p1-name-display">You</span>
+            <span class="score-turn-badge" id="p1-turn-text">Your Turn</span>
+          </div>
+          <span class="player-score-value" id="p1-score-display">4</span>
         </div>
-        
-        <div class="turn-indicator-container">
-          <div class="turn-indicator-pill" id="turn-indicator-pill">Player 1's Turn</div>
+
+        <!-- Turn/Anim indicator text center -->
+        <div class="center-turn-indicator-col">
+          <span id="turn-indicator-pill" class="hud-turn-text">Your Turn</span>
+          <div id="bp-pop-up" class="bp-chime-pop hidden">+1 BP</div>
         </div>
-        
+
+        <!-- Right player card -->
         <div class="player-score-col right" id="p2-card">
-          <span class="player-score-label" id="p2-name-display">COMPUTER</span>
-          <span class="player-score-value" id="p2-score-display">0</span>
+          <span class="player-score-value" id="p2-score-display">3</span>
+          <div class="score-details-wrapper">
+            <span class="player-score-label" id="p2-name-display">Alex</span>
+            <span class="score-turn-badge" id="p2-turn-text">Alex's Turn</span>
+          </div>
+          <div class="player-color-indicator dot-style-red" id="p2-dot-color"></div>
         </div>
       </div>
 
-      <!-- Board Wrapper -->
+      <!-- Symmetrical Board Card -->
       <div class="board-card">
         <div class="board-inner-wrapper">
           <svg id="game-board-svg" width="100%" height="100%"></svg>
         </div>
       </div>
 
-      <!-- Helper instructions below board -->
-      <div class="game-instruction-text">
-        Tap a space between two dots to draw a line. Complete a box to score a point.
-      </div>
-
-      <!-- Floating bottom control dock -->
-      <div class="bottom-dock-container">
-        <div class="bottom-dock">
-          <!-- Restart button -->
-          <button id="reset-game-btn" class="dock-btn" title="Restart Game" aria-label="Restart Game">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-            </svg>
-          </button>
-          
-          <!-- Undo button -->
-          <button id="undo-btn" class="dock-btn" title="Undo Move" aria-label="Undo Move">
+      <!-- Action buttons bottom (Image 2 layout: UNDO, PAUSE, MENU) -->
+      <div class="gameplay-action-buttons-dock">
+        <button id="undo-btn" class="game-hud-btn" aria-label="Undo Move">
+          <div class="hud-btn-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 7v6h6"/>
               <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
             </svg>
-          </button>
+          </div>
+          <span class="hud-btn-label">UNDO</span>
+        </button>
+
+        <button id="reset-game-btn" class="game-hud-btn" aria-label="Pause Game">
+          <div class="hud-btn-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="4" width="4" height="16" rx="1"/>
+              <rect x="14" y="4" width="4" height="16" rx="1"/>
+            </svg>
+          </div>
+          <span class="hud-btn-label">PAUSE</span>
+        </button>
+
+        <button id="back-to-menu-btn" class="game-hud-btn" aria-label="Open Menu">
+          <div class="hud-btn-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="1.5"/>
+              <circle cx="6" cy="12" r="1.5"/>
+              <circle cx="18" cy="12" r="1.5"/>
+            </svg>
+          </div>
+          <span class="hud-btn-label">MENU</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ================= SCREEN 5: BOX VAULT (Image 2 Screen 10) ================= -->
+    <section id="box-vault-screen" class="screen">
+      <div class="menu-top-header">
+        <button id="back-from-vault" class="icon-back-btn" aria-label="Go Back">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <span class="screen-title">BOX VAULT</span>
+        <!-- Currency top-right -->
+        <div class="header-currency-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#fbbf24" stroke="none">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <span id="vault-currency-bp">1,240</span>
+        </div>
+      </div>
+
+      <!-- Shop Categories Tab Bar -->
+      <div class="shop-tabs-bar">
+        <button class="shop-tab-item active" data-shop-tab="dots">
+          <span class="shop-tab-lbl">Dots</span>
+        </button>
+        <button class="shop-tab-item" data-shop-tab="themes">
+          <span class="shop-tab-lbl">Themes</span>
+        </button>
+        <button class="shop-tab-item" data-shop-tab="lines">
+          <span class="shop-tab-lbl">Lines</span>
+        </button>
+        <button class="shop-tab-item" data-shop-tab="avatars">
+          <span class="shop-tab-lbl">Avatars</span>
+        </button>
+      </div>
+
+      <div class="setup-scroll-container">
+        <!-- Dot Styles Grid -->
+        <div class="shop-grid active" id="shop-tab-content-dots">
+          <!-- Item 1: Classic (Equipped) -->
+          <div class="shop-item-card" data-shop-item="classic">
+            <div class="shop-item-preview dot-style-preview-classic">
+              <div class="dot-preview classic-dot"></div>
+            </div>
+            <span class="shop-item-name">Classic</span>
+            <button class="shop-buy-btn equipped" data-buy-item="classic">Equipped</button>
+          </div>
+
+          <!-- Item 2: Hollow (100 BP) -->
+          <div class="shop-item-card" data-shop-item="hollow">
+            <div class="shop-item-preview dot-style-preview-hollow">
+              <div class="dot-preview hollow-dot"></div>
+            </div>
+            <span class="shop-item-name">Hollow</span>
+            <button class="shop-buy-btn" data-buy-item="hollow" data-cost="100">100 BP</button>
+          </div>
+
+          <!-- Item 3: Glow (150 BP) -->
+          <div class="shop-item-card" data-shop-item="glow">
+            <div class="shop-item-preview dot-style-preview-glow">
+              <div class="dot-preview glow-dot"></div>
+            </div>
+            <span class="shop-item-name">Glow</span>
+            <button class="shop-buy-btn" data-buy-item="glow" data-cost="150">150 BP</button>
+          </div>
+
+          <!-- Item 4: Neon (250 BP) -->
+          <div class="shop-item-card" data-shop-item="neon">
+            <div class="shop-item-preview dot-style-preview-neon">
+              <div class="dot-preview neon-dot"></div>
+            </div>
+            <span class="shop-item-name">Neon</span>
+            <button class="shop-buy-btn" data-buy-item="neon" data-cost="250">250 BP</button>
+          </div>
+
+          <!-- Item 5: Square (250 BP) -->
+          <div class="shop-item-card" data-shop-item="square">
+            <div class="shop-item-preview dot-style-preview-square">
+              <div class="dot-preview square-dot"></div>
+            </div>
+            <span class="shop-item-name">Square</span>
+            <button class="shop-buy-btn" data-buy-item="square" data-cost="250">250 BP</button>
+          </div>
+
+          <!-- Item 6: Diamond (300 BP) -->
+          <div class="shop-item-card" data-shop-item="diamond">
+            <div class="shop-item-preview dot-style-preview-diamond">
+              <div class="dot-preview diamond-dot"></div>
+            </div>
+            <span class="shop-item-name">Diamond</span>
+            <button class="shop-buy-btn" data-buy-item="diamond" data-cost="300">300 BP</button>
+          </div>
+        </div>
+
+        <!-- Under Construction other categories -->
+        <div class="shop-grid" id="shop-tab-content-themes">
+          <div class="shop-empty-state">
+            <span>Themes coming soon in next update!</span>
+          </div>
+        </div>
+        <div class="shop-grid" id="shop-tab-content-lines">
+          <div class="shop-empty-state">
+            <span>Line patterns coming soon in next update!</span>
+          </div>
+        </div>
+        <div class="shop-grid" id="shop-tab-content-avatars">
+          <div class="shop-empty-state">
+            <span>Player Avatars coming soon in next update!</span>
+          </div>
         </div>
       </div>
     </section>
-  </div>
-  </div>
 
-  <!-- LEADERBOARD OVERLAY MODAL -->
-  <div id="leaderboard-modal" class="modal-overlay">
-    <div class="modal-card leaderboard-card">
-      <div class="modal-header">
-        <h2>Friends Matchups</h2>
-        <button id="leaderboard-close-btn" class="close-btn" aria-label="Close Leaderboard">&times;</button>
+    <!-- ================= SCREEN 6: LEADERBOARD (Image 2 Screen 11) ================= -->
+    <section id="leaderboard-screen" class="screen">
+      <div class="menu-top-header">
+        <button id="back-from-leaderboard" class="icon-back-btn" aria-label="Go Back">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <span class="screen-title">LEADERBOARD</span>
+        <div style="width: 40px;"></div> <!-- Spacer -->
       </div>
-      <p class="leaderboard-subtitle">Head-to-head records in Pass & Play mode</p>
 
-      <div class="leaderboard-content-wrapper">
-        <div id="leaderboard-list" class="leaderboard-list">
-          <!-- Dynamically populated in JavaScript -->
+      <!-- Tabs (Global, Weekly, Friends) -->
+      <div class="leaderboard-tabs-bar">
+        <button class="leaderboard-tab-item active" data-lead-tab="global">Global</button>
+        <button class="leaderboard-tab-item" data-lead-tab="weekly">Weekly</button>
+        <button class="leaderboard-tab-item" data-lead-tab="friends">Friends</button>
+      </div>
+
+      <!-- Rankings List Container -->
+      <div class="setup-scroll-container">
+        <div class="leaderboard-list-view" id="leaderboard-list">
+          <!-- Populated dynamically via JS: Mock global data or friends matchup stats -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SCREEN 7: HOW TO PLAY (Image 2 Screen 12) ================= -->
+    <section id="how-to-play-screen" class="screen">
+      <div class="menu-top-header">
+        <button id="back-from-how-to-play" class="icon-back-btn" aria-label="Go Back">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <span class="screen-title">HOW TO PLAY</span>
+        <div style="width: 40px;"></div>
+      </div>
+
+      <div class="setup-scroll-container">
+        <div class="how-to-play-list">
+          <!-- Step 1 -->
+          <div class="how-to-play-row">
+            <div class="step-number-container">1</div>
+            <div class="step-details-group">
+              <span class="step-instruction">Connect two neighboring dots.</span>
+              <div class="step-diagram-box">
+                <svg width="120" height="40" viewBox="0 0 120 40">
+                  <line x1="20" y1="20" x2="100" y2="20" stroke="#3f47e0" stroke-width="3.5" stroke-linecap="round"/>
+                  <circle cx="20" cy="20" r="5.5" fill="#1e293b"/>
+                  <circle cx="100" cy="20" r="5.5" fill="#1e293b"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="how-to-play-row">
+            <div class="step-number-container">2</div>
+            <div class="step-details-group">
+              <span class="step-instruction">Complete a square to get a box.</span>
+              <div class="step-diagram-box">
+                <svg width="80" height="80" viewBox="0 0 80 80">
+                  <rect x="20" y="20" width="40" height="40" fill="rgba(63, 71, 224, 0.15)" rx="4"/>
+                  <line x1="20" y1="20" x2="60" y2="20" stroke="#3f47e0" stroke-width="3"/>
+                  <line x1="20" y1="60" x2="60" y2="60" stroke="#3f47e0" stroke-width="3"/>
+                  <line x1="20" y1="20" x2="20" y2="60" stroke="#3f47e0" stroke-width="3"/>
+                  <line x1="60" y1="20" x2="60" y2="60" stroke="#3f47e0" stroke-width="3"/>
+                  <circle cx="20" cy="20" r="4.5" fill="#1e293b"/>
+                  <circle cx="60" cy="20" r="4.5" fill="#1e293b"/>
+                  <circle cx="20" cy="60" r="4.5" fill="#1e293b"/>
+                  <circle cx="60" cy="60" r="4.5" fill="#1e293b"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="how-to-play-row">
+            <div class="step-number-container">3</div>
+            <div class="step-details-group">
+              <span class="step-instruction">You get one point and another turn.</span>
+              <div class="step-diagram-box">
+                <svg width="80" height="80" viewBox="0 0 80 80">
+                  <rect x="20" y="20" width="40" height="40" fill="rgba(63, 71, 224, 0.15)" rx="4"/>
+                  <line x1="20" y1="20" x2="60" y2="20" stroke="#3f47e0" stroke-width="3"/>
+                  <line x1="20" y1="60" x2="60" y2="60" stroke="#3f47e0" stroke-width="3"/>
+                  <line x1="20" y1="20" x2="20" y2="60" stroke="#3f47e0" stroke-width="3"/>
+                  <line x1="60" y1="20" x2="60" y2="60" stroke="#3f47e0" stroke-width="3"/>
+                  <text x="40" y="45" font-family="'Outfit', sans-serif" font-weight="700" font-size="16" fill="#3f47e0" text-anchor="middle">+1</text>
+                  <circle cx="20" cy="20" r="4.5" fill="#1e293b"/>
+                  <circle cx="60" cy="20" r="4.5" fill="#1e293b"/>
+                  <circle cx="20" cy="60" r="4.5" fill="#1e293b"/>
+                  <circle cx="60" cy="60" r="4.5" fill="#1e293b"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="how-to-play-row">
+            <div class="step-number-container">4</div>
+            <div class="step-details-group">
+              <span class="step-instruction">Player with the most boxes wins!</span>
+              <div class="step-diagram-box">
+                <svg width="100" height="100" viewBox="0 0 100 100">
+                  <!-- Multiple boxes grid preview -->
+                  <rect x="15" y="15" width="35" height="35" fill="rgba(63, 71, 224, 0.15)"/>
+                  <rect x="50" y="15" width="35" height="35" fill="rgba(239, 68, 68, 0.12)"/>
+                  <rect x="15" y="50" width="35" height="35" fill="rgba(63, 71, 224, 0.15)"/>
+                  <rect x="50" y="50" width="35" height="35" fill="rgba(63, 71, 224, 0.15)"/>
+                  
+                  <line x1="15" y1="15" x2="85" y2="15" stroke="#1e293b" stroke-width="1.5"/>
+                  <line x1="15" y1="50" x2="85" y2="50" stroke="#1e293b" stroke-width="1.5"/>
+                  <line x1="15" y1="85" x2="85" y2="85" stroke="#1e293b" stroke-width="1.5"/>
+                  <line x1="15" y1="15" x2="15" y2="85" stroke="#1e293b" stroke-width="1.5"/>
+                  <line x1="50" y1="15" x2="50" y2="85" stroke="#1e293b" stroke-width="1.5"/>
+                  <line x1="85" y1="15" x2="85" y2="85" stroke="#1e293b" stroke-width="1.5"/>
+
+                  <!-- Blue boxes check, red boxes cross -->
+                  <text x="32" y="38" font-family="sans-serif" font-weight="700" font-size="14" fill="#3f47e0" text-anchor="middle">✓</text>
+                  <text x="32" y="73" font-family="sans-serif" font-weight="700" font-size="14" fill="#3f47e0" text-anchor="middle">✓</text>
+                  <text x="67" y="73" font-family="sans-serif" font-weight="700" font-size="14" fill="#3f47e0" text-anchor="middle">✓</text>
+                  <text x="67" y="38" font-family="sans-serif" font-weight="700" font-size="14" fill="#ef4444" text-anchor="middle">✗</text>
+
+                  <circle cx="15" cy="15" r="3" fill="#1e293b"/>
+                  <circle cx="50" cy="15" r="3" fill="#1e293b"/>
+                  <circle cx="85" cy="15" r="3" fill="#1e293b"/>
+                  <circle cx="15" cy="50" r="3" fill="#1e293b"/>
+                  <circle cx="50" cy="50" r="3" fill="#1e293b"/>
+                  <circle cx="85" cy="50" r="3" fill="#1e293b"/>
+                  <circle cx="15" cy="85" r="3" fill="#1e293b"/>
+                  <circle cx="50" cy="85" r="3" fill="#1e293b"/>
+                  <circle cx="85" cy="85" r="3" fill="#1e293b"/>
+                </svg>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="leaderboard-footer">
-        <button id="leaderboard-reset-btn" class="reset-stats-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-          Clear Matchup History
+      <div class="setup-footer">
+        <button id="how-to-play-got-it" class="primary-btn large-btn full-width-btn">
+          <span>GOT IT</span>
         </button>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- GAME OVER OVERLAY MODAL -->
+    <!-- ================= SCREEN 8: SETTINGS SCREEN (Overlay/Sub-screen) ================= -->
+    <section id="settings-screen" class="screen">
+      <div class="menu-top-header">
+        <button id="back-from-settings" class="icon-back-btn" aria-label="Go Back">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <span class="screen-title">SETTINGS</span>
+        <div style="width: 40px;"></div>
+      </div>
+
+      <div class="setup-scroll-container text-left-align">
+        <span class="setup-section-label">Preferences</span>
+        
+        <div class="settings-list-container">
+          <!-- Sound Toggle -->
+          <div class="setting-row-item">
+            <div class="setting-item-text">
+              <span class="setting-item-title">Sound Effects</span>
+              <span class="setting-item-desc">Play synthesized chimes on moves</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="settings-sound-toggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <!-- Haptics Toggle -->
+          <div class="setting-row-item">
+            <div class="setting-item-text">
+              <span class="setting-item-title">Haptic Feedback</span>
+              <span class="setting-item-desc">Vibrate on completions and scores</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="settings-haptics-toggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <span class="setup-section-label">Information</span>
+        
+        <div class="settings-list-container">
+          <!-- About expansion header -->
+          <div class="expandable-panel">
+            <button id="settings-about-trigger" class="expandable-header-btn">
+              <span>About Game</span>
+              <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+            <div id="settings-about-content" class="expandable-content hidden">
+              <p><strong>Dot Box</strong> is a premium, modern interpretation of the classic Dots & Boxes pen-and-paper game.</p>
+              <p>Programmed using pure HTML5, CSS3, and high-performance client-side Javascript. It features responsive layouts, advanced game state machines, simulated minimax AI, and Web Audio API synthesized audio.</p>
+              <span class="version-lbl">Version 1.0.0</span>
+            </div>
+          </div>
+
+          <!-- Privacy expansion header -->
+          <div class="expandable-panel">
+            <button id="settings-privacy-trigger" class="expandable-header-btn">
+              <span>Privacy Policy</span>
+              <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+            <div id="settings-privacy-content" class="expandable-content hidden">
+              <p>Your privacy is fully respected. Dot Box runs completely locally on your device:</p>
+              <ul>
+                <li>No network tracking or external API logging is used.</li>
+                <li>Stats are stored in local web storage (LocalStorage).</li>
+                <li>Zero metrics are sent online.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <button id="settings-clear-all" class="danger-btn full-width-btn" style="margin-top: 24px;">
+          <span>CLEAR ALL STATS & PROGRESS</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ================= SCREEN 9: ACHIEVEMENTS SCREEN ================= -->
+    <section id="achievements-screen" class="screen">
+      <div class="menu-top-header">
+        <button id="back-from-achievements" class="icon-back-btn" aria-label="Go Back">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <span class="screen-title">ACHIEVEMENTS</span>
+        <div style="width: 40px;"></div>
+      </div>
+
+      <div class="setup-scroll-container">
+        <div class="achievements-list" id="achievements-list-container">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </section>
+
+  </div> <!-- End App Container -->
+
+  <!-- ================= GAME OVER OVERLAY MODAL (Image 2 Screen 8 Style) ================= -->
   <div id="game-over-modal" class="modal-overlay">
-    <div class="modal-card">
-      <div class="trophy-container">
-        <!-- SVG Animated Star -->
-        <svg class="trophy-svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+    <div class="modal-card game-over-card">
+      <div class="trophy-glow-container">
+        <div class="trophy-halo-effect"></div>
+        <svg class="trophy-svg-gold" width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.5">
+          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+          <path d="M4 22h16"/>
+          <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"/>
+          <path d="M12 2a4 4 0 0 1 4 4v7a4 4 0 0 1-4 4 4 4 0 0 1-4-4V6a4 4 0 0 1 4-4z" fill="#fbbf24"/>
         </svg>
       </div>
       
-      <h2 id="winner-title">Player 1 Wins!</h2>
-      <p class="winner-subtitle" id="winner-subtitle">What a spectacular game!</p>
+      <h2 id="winner-title" class="game-over-winner-title">YOU WIN!</h2>
+      <p id="winner-subtitle" class="game-over-funny-subtitle">Einstein would be proud of your grid skills.</p>
 
-      <div class="modal-score-summary">
-        <div class="summary-card p1-summary">
-          <span class="summary-name" id="summary-p1-name">Player 1</span>
-          <span class="summary-score" id="summary-p1-score">15</span>
-        </div>
-        <div class="summary-divider">:</div>
-        <div class="summary-card p2-summary">
-          <span class="summary-score" id="summary-p2-score">10</span>
-          <span class="summary-name" id="summary-p2-name">Computer</span>
+      <!-- Scoreboard display block -->
+      <div class="game-over-score-summary">
+        <div class="summary-score-large-box">
+          <div class="scores-inline-val">
+            <span id="summary-p1-score" class="blue-score-num">14</span>
+            <span class="score-dash-divider">-</span>
+            <span id="summary-p2-score" class="red-score-num">9</span>
+          </div>
+          <span class="score-summary-subtitle-lbl">Boxes Completed</span>
         </div>
       </div>
 
-      <div class="modal-buttons">
-        <button id="modal-replay-btn" class="primary-btn">
-          Play Again
-        </button>
-        <button id="modal-menu-btn" class="secondary-btn">
-          Back to Menu
-        </button>
+      <!-- BP reward popup indicators -->
+      <div class="game-over-reward-banner">
+        <span id="game-over-bp-earned-text">+14 BP</span>
       </div>
+
+      <!-- Action buttons -->
+      <div class="modal-buttons-group">
+        <button id="modal-replay-btn" class="primary-btn large-btn full-width-btn">PLAY AGAIN</button>
+        <button id="modal-menu-btn" class="white-card-btn full-width-btn">HOME</button>
+      </div>
+      
+      <!-- User names summary for reference -->
+      <span id="summary-p1-name" style="display:none;">Player 1</span>
+      <span id="summary-p2-name" style="display:none;">Computer</span>
     </div>
+    
+    <!-- Canvas for confetti overlay effects -->
+    <canvas id="game-over-particles" class="confetti-canvas"></canvas>
   </div>
 
-
-
-  <!-- Premium Loading / Transition Overlay -->
+  <!-- Screen loader transition overlay -->
   <div id="screen-loader" class="screen-loader">
     <div class="loader-content">
       <div class="loader-dots">
@@ -591,6 +1053,5 @@
   </div>
 
   <!-- Scripts -->
-
 </body>
 </html>

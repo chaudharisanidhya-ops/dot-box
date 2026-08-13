@@ -439,7 +439,12 @@ const Game = {
     setupComputer: null,
     setupPassPlay: null,
     game: null,
-    profile: null
+    profile: null,
+    boxVault: null,
+    leaderboard: null,
+    howToPlay: null,
+    settings: null,
+    achievements: null
   },
 
   init() {
@@ -449,9 +454,19 @@ const Game = {
     this.screens.setupComputer = document.getElementById('setup-computer-screen');
     this.screens.setupPassPlay = document.getElementById('setup-pass-play-screen');
     this.screens.game = document.getElementById('game-screen');
-    this.screens.profile = document.getElementById('profile-screen');
+    this.screens.profile = document.getElementById('tab-profile');
+    this.screens.boxVault = document.getElementById('box-vault-screen');
+    this.screens.leaderboard = document.getElementById('leaderboard-screen');
+    this.screens.howToPlay = document.getElementById('how-to-play-screen');
+    this.screens.settings = document.getElementById('settings-screen');
+    this.screens.achievements = document.getElementById('achievements-screen');
+    
+    // Initialize stats & vault
+    this.initCareerStats();
+    this.initBoxVault();
     
     this.loadStats();
+    this.setupMenuEventListeners();
     this.setupMenuEventListeners();
     this.setupGameEventListeners();
     this.sounds.updateMuteUI();
@@ -622,11 +637,118 @@ const Game = {
   },
 
   setupMenuEventListeners() {
+    // Bottom nav switching
+    document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.getAttribute('data-tab');
+        this.switchTab(tab);
+      });
+    });
+
+    const dailyPreviewBtn = document.getElementById('daily-challenge-preview-btn');
+    if (dailyPreviewBtn) {
+      dailyPreviewBtn.addEventListener('click', () => {
+        this.switchTab('daily');
+      });
+    }
+
+    const dailyPlayBtn = document.getElementById('daily-play-btn');
+    if (dailyPlayBtn) {
+      dailyPlayBtn.addEventListener('click', () => {
+        this.playDailyChallenge();
+      });
+    }
+
     // Dashboard actions
     const vsCompBtn = document.getElementById('dashboard-vs-computer-btn');
     const passPlayBtn = document.getElementById('dashboard-pass-play-btn');
     
-    // Profile screen navigation
+    // Profile settings cog and settings item clicks
+    const profileSettingsCog = document.getElementById('profile-settings-cog');
+    if (profileSettingsCog) {
+      profileSettingsCog.addEventListener('click', () => {
+        this.transitionToScreen('settings');
+        this.vibrate(15);
+      });
+    }
+
+    // Profile menu stack items
+    const menuVaultBtn = document.getElementById('profile-menu-vault');
+    if (menuVaultBtn) {
+      menuVaultBtn.addEventListener('click', () => {
+        this.openBoxVault();
+      });
+    }
+
+    const menuAchievementsBtn = document.getElementById('profile-menu-achievements');
+    if (menuAchievementsBtn) {
+      menuAchievementsBtn.addEventListener('click', () => {
+        this.openAchievements();
+      });
+    }
+
+    const menuSettingsBtn = document.getElementById('profile-menu-settings');
+    if (menuSettingsBtn) {
+      menuSettingsBtn.addEventListener('click', () => {
+        this.transitionToScreen('settings');
+        this.vibrate(15);
+      });
+    }
+
+    // Settings back button
+    const backSettingsBtn = document.getElementById('back-from-settings');
+    if (backSettingsBtn) {
+      backSettingsBtn.addEventListener('click', () => {
+        this.transitionToScreen('profile');
+        this.vibrate(15);
+      });
+    }
+
+    // Achievements back button
+    const backAchievementsBtn = document.getElementById('back-from-achievements');
+    if (backAchievementsBtn) {
+      backAchievementsBtn.addEventListener('click', () => {
+        this.transitionToScreen('profile');
+        this.vibrate(15);
+      });
+    }
+
+    // Vault back button
+    const backVaultBtn = document.getElementById('back-from-vault');
+    if (backVaultBtn) {
+      backVaultBtn.addEventListener('click', () => {
+        this.transitionToScreen('profile');
+        this.vibrate(15);
+      });
+    }
+
+    // Leaderboard back button
+    const backLeaderboardBtn = document.getElementById('back-from-leaderboard');
+    if (backLeaderboardBtn) {
+      backLeaderboardBtn.addEventListener('click', () => {
+        this.transitionToScreen('home');
+        this.vibrate(15);
+      });
+    }
+
+    // How to Play back button & Got it button
+    const backHowToPlayBtn = document.getElementById('back-from-how-to-play');
+    if (backHowToPlayBtn) {
+      backHowToPlayBtn.addEventListener('click', () => {
+        this.transitionToScreen('home');
+        this.vibrate(15);
+      });
+    }
+
+    const howToPlayGotIt = document.getElementById('how-to-play-got-it');
+    if (howToPlayGotIt) {
+      howToPlayGotIt.addEventListener('click', () => {
+        this.transitionToScreen('home');
+        this.vibrate(15);
+      });
+    }
+
+    // Profile screen navigation (Top left avatar on Home tab)
     const profileBtn = document.getElementById('profile-btn');
     if (profileBtn) {
       profileBtn.addEventListener('click', () => {
@@ -635,38 +757,19 @@ const Game = {
       });
     }
 
-    const backProfileBtn = document.getElementById('back-to-dashboard-profile');
-    if (backProfileBtn) {
-      backProfileBtn.addEventListener('click', () => {
-        this.transitionToScreen('dashboard');
-        this.vibrate(15);
-        // Collapse accordions when leaving profile screen
-        const aboutContent = document.getElementById('settings-about-content');
-        const aboutSection = aboutContent?.parentElement;
-        const privacyContent = document.getElementById('settings-privacy-content');
-        const privacySection = privacyContent?.parentElement;
-        if (aboutContent) aboutContent.classList.add('hidden');
-        if (aboutSection) aboutSection.classList.remove('active');
-        if (privacyContent) privacyContent.classList.add('hidden');
-        if (privacySection) privacySection.classList.remove('active');
-      });
-    }
-
     if (vsCompBtn) {
       vsCompBtn.addEventListener('click', () => {
         this.gameMode = 'ai';
-        // Reset setup state to defaults
         this.aiDifficulty = 'medium';
         this.gridSize = 5;
         this.p1Color = '#3f47e0';
-        this.p2Color = '#b91c1c';
+        this.p2Color = '#ef4444';
         
-        // Update UI selection cards to active status
-        document.querySelectorAll('#ai-difficulty-control .selector-card').forEach(card => {
-          card.classList.toggle('active', card.getAttribute('data-difficulty') === 'medium');
+        document.querySelectorAll('#ai-difficulty-control .selector-pill').forEach(pill => {
+          pill.classList.toggle('active', pill.getAttribute('data-difficulty') === 'medium');
         });
-        document.querySelectorAll('#ai-size-control .selector-card').forEach(card => {
-          card.classList.toggle('active', parseInt(card.getAttribute('data-size'), 10) === 5);
+        document.querySelectorAll('#ai-size-control .selector-pill').forEach(pill => {
+          pill.classList.toggle('active', parseInt(pill.getAttribute('data-size'), 10) === 5);
         });
 
         this.setupColorPalettes();
@@ -678,16 +781,15 @@ const Game = {
     if (passPlayBtn) {
       passPlayBtn.addEventListener('click', () => {
         this.gameMode = 'pvp';
-        // Reset setup state to defaults
         this.gridSize = 5;
         this.p1Color = '#3f47e0';
-        this.p2Color = '#b91c1c';
+        this.p2Color = '#ef4444';
         
-        document.getElementById('pvp-p1-name-input').value = '';
-        document.getElementById('pvp-p2-name-input').value = '';
+        document.getElementById('pvp-p1-name-input').value = 'Player One';
+        document.getElementById('pvp-p2-name-input').value = 'Player Two';
 
-        document.querySelectorAll('#pvp-size-control .selector-card').forEach(card => {
-          card.classList.toggle('active', parseInt(card.getAttribute('data-size'), 10) === 5);
+        document.querySelectorAll('#pvp-size-control .selector-pill').forEach(pill => {
+          pill.classList.toggle('active', parseInt(pill.getAttribute('data-size'), 10) === 5);
         });
 
         this.setupColorPalettes();
@@ -696,7 +798,7 @@ const Game = {
       });
     }
 
-    // Back to dashboard
+    // Back buttons inside setup
     const backAi = document.getElementById('back-to-dashboard-ai');
     if (backAi) {
       backAi.addEventListener('click', () => {
@@ -710,36 +812,39 @@ const Game = {
       });
     }
 
-    // AI setup selections
-    const diffButtons = document.querySelectorAll('#ai-difficulty-control .selector-card');
+    // AI setup selection pills
+    const diffButtons = document.querySelectorAll('#ai-difficulty-control .selector-pill');
     diffButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         diffButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         this.aiDifficulty = btn.getAttribute('data-difficulty');
+        this.vibrate(10);
       });
     });
 
-    const aiSizeButtons = document.querySelectorAll('#ai-size-control .selector-card');
+    const aiSizeButtons = document.querySelectorAll('#ai-size-control .selector-pill');
     aiSizeButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         aiSizeButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         this.gridSize = parseInt(btn.getAttribute('data-size'), 10);
+        this.vibrate(10);
       });
     });
 
-    // PvP setup selections
-    const pvpSizeButtons = document.querySelectorAll('#pvp-size-control .selector-card');
+    // PvP setup selection pills
+    const pvpSizeButtons = document.querySelectorAll('#pvp-size-control .selector-pill');
     pvpSizeButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         pvpSizeButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         this.gridSize = parseInt(btn.getAttribute('data-size'), 10);
+        this.vibrate(10);
       });
     });
 
-    // Start Game - Computer
+    // Start Games
     const startCompBtn = document.getElementById('start-computer-game-btn');
     if (startCompBtn) {
       startCompBtn.addEventListener('click', () => {
@@ -750,7 +855,6 @@ const Game = {
       });
     }
 
-    // Start Game - Pass & Play
     const startPvpBtn = document.getElementById('start-pass-play-btn');
     if (startPvpBtn) {
       startPvpBtn.addEventListener('click', () => {
@@ -761,14 +865,14 @@ const Game = {
         this.p1Name = p1Input ? p1Input.value.trim() : '';
         this.p2Name = p2Input ? p2Input.value.trim() : '';
         
-        if (!this.p1Name) this.p1Name = 'Player 1';
-        if (!this.p2Name) this.p2Name = 'Player 2';
+        if (!this.p1Name) this.p1Name = 'Player One';
+        if (!this.p2Name) this.p2Name = 'Player Two';
         
         this.launchGame();
       });
     }
 
-    // View Leaderboard Button
+    // View Leaderboard Button (secondary button on dashboard)
     const viewLeaderboardBtn = document.getElementById('view-leaderboard-btn');
     if (viewLeaderboardBtn) {
       viewLeaderboardBtn.addEventListener('click', () => {
@@ -776,28 +880,49 @@ const Game = {
       });
     }
 
-    // Close Leaderboard Button
-    const closeLeaderboardBtn = document.getElementById('leaderboard-close-btn');
-    if (closeLeaderboardBtn) {
-      closeLeaderboardBtn.addEventListener('click', () => {
-        this.closeLeaderboard();
+    // Leaderboard Tabs (Global, Weekly, Friends)
+    document.querySelectorAll('.leaderboard-tabs-bar .leaderboard-tab-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.leaderboard-tabs-bar .leaderboard-tab-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.getAttribute('data-lead-tab');
+        this.renderLeaderboard(tab);
+        this.vibrate(10);
       });
-    }
+    });
 
-    // Reset Leaderboard Button
-    const resetLeaderboardBtn = document.getElementById('leaderboard-reset-btn');
-    if (resetLeaderboardBtn) {
-      resetLeaderboardBtn.addEventListener('click', () => {
-        this.resetLeaderboard();
+    // Box Vault Shop Tabs clicks
+    document.querySelectorAll('.shop-tabs-bar .shop-tab-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.shop-tabs-bar .shop-tab-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.getAttribute('data-shop-tab');
+        
+        // Hide all grids, show target grid
+        document.querySelectorAll('#box-vault-screen .shop-grid').forEach(g => g.classList.remove('active'));
+        const activeGrid = document.getElementById(`shop-tab-content-${tab}`);
+        if (activeGrid) activeGrid.classList.add('active');
+        this.vibrate(10);
       });
-    }
+    });
 
-    // Click outside modal overlay to close
-    const leaderboardModal = document.getElementById('leaderboard-modal');
-    if (leaderboardModal) {
-      leaderboardModal.addEventListener('click', (e) => {
-        if (e.target === leaderboardModal) {
-          this.closeLeaderboard();
+    // Vault Purchase / Equip Buttons hookup
+    document.querySelectorAll('.shop-buy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const itemStyle = btn.getAttribute('data-buy-item');
+        const cost = parseInt(btn.getAttribute('data-cost') || '0', 10);
+        this.purchaseDotStyle(itemStyle, cost);
+      });
+    });
+
+    // Settings Clear Stats button
+    const clearStatsBtn = document.getElementById('settings-clear-all');
+    if (clearStatsBtn) {
+      clearStatsBtn.addEventListener('click', () => {
+        if (confirm("Are you sure you want to RESET all career stats, daily challenges, achievements, and equipped vault items? This cannot be undone.")) {
+          localStorage.clear();
+          alert("Statistics cleared! Reloading game...");
+          window.location.reload();
         }
       });
     }
@@ -859,13 +984,30 @@ const Game = {
   },
 
   transitionToScreen(screenName) {
+    if (screenName === 'profile') {
+      this.switchTab('profile');
+      screenName = 'dashboard';
+    }
+    if (screenName === 'daily') {
+      this.switchTab('daily');
+      screenName = 'dashboard';
+    }
+    if (screenName === 'home') {
+      this.switchTab('home');
+      screenName = 'dashboard';
+    }
+
     const loader = document.getElementById('screen-loader');
     const screensMap = {
       dashboard: this.screens.dashboard,
       'setup-computer': this.screens.setupComputer,
       'setup-pass-play': this.screens.setupPassPlay,
       game: this.screens.game,
-      profile: this.screens.profile
+      'box-vault': this.screens.boxVault,
+      leaderboard: this.screens.leaderboard,
+      'how-to-play': this.screens.howToPlay,
+      settings: this.screens.settings,
+      achievements: this.screens.achievements
     };
 
     const activeScreen = screensMap[screenName];
@@ -1634,6 +1776,33 @@ const Game = {
     currentBp += bpGained;
     localStorage.setItem('dots_boxes_bp', currentBp.toString());
     
+    // Update Career Stats
+    const statsObj = JSON.parse(localStorage.getItem('dots_boxes_career_stats') || '{"gamesPlayed":24,"wins":16,"boxesCompleted":342,"bestScore":18,"maxStreak":5}');
+    statsObj.gamesPlayed++;
+    if (result === 'win') {
+      statsObj.wins++;
+      this.unlockAchievement('first_win');
+    }
+    statsObj.boxesCompleted += this.p1Score;
+    if (this.p1Score > statsObj.bestScore) {
+      statsObj.bestScore = this.p1Score;
+    }
+    // Pull daily streak as maxStreak
+    const streak = parseInt(localStorage.getItem('dots_boxes_streak') || '0', 10);
+    if (streak > statsObj.maxStreak) {
+      statsObj.maxStreak = streak;
+    }
+    if (streak >= 3) {
+      this.unlockAchievement('streak_start');
+    }
+    localStorage.setItem('dots_boxes_career_stats', JSON.stringify(statsObj));
+    
+    // Update game over BP reward text
+    const gameOverBpText = document.getElementById('game-over-bp-earned-text');
+    if (gameOverBpText) {
+      gameOverBpText.textContent = `+${bpGained} BP`;
+    }
+    
     this.updateDashboardProgressionUI();
 
     // Display modal
@@ -1999,26 +2168,356 @@ const Game = {
     const dashLevelVal = document.getElementById('dash-level-val');
     const dashTitleVal = document.getElementById('dash-title-val');
     const dashBpVal = document.getElementById('dash-bp-val');
-    const dashProgressFill = document.getElementById('dash-progress-fill');
-    const dashProgressText = document.getElementById('dash-progress-text');
-    const dashAvatarEmoji = document.getElementById('dash-avatar-emoji');
+    const dashBpSub = document.getElementById('dash-bp-sub');
+    const dashProgressFill = document.getElementById('dash-level-progress-fill');
     
     if (dashLevelVal) dashLevelVal.textContent = prog.level;
     if (dashTitleVal) dashTitleVal.textContent = prog.title;
-    if (dashBpVal) dashBpVal.textContent = prog.bp;
-    if (dashProgressFill) dashProgressFill.style.width = `${prog.progressPercent}%`;
-    if (dashProgressText) dashProgressText.textContent = `${prog.currentLevelBp} / ${prog.nextLevelBp} BP to next level`;
-    if (dashAvatarEmoji) dashAvatarEmoji.textContent = prog.avatar;
+    if (dashBpVal) dashBpVal.textContent = prog.bp.toLocaleString();
+    if (dashBpSub) {
+      dashBpSub.textContent = `${prog.bp.toLocaleString()} / ${(prog.level * 500).toLocaleString()} to Level ${prog.level + 1}`;
+    }
+    if (dashProgressFill) {
+      dashProgressFill.style.width = `${prog.progressPercent}%`;
+    }
     
-    // Also sync to Profile screen elements if they exist
-    const profileName = document.querySelector('.profile-name');
-    const profileLevel = document.querySelector('.profile-level');
-    const profileAvatar = document.querySelector('.profile-avatar-large');
+    // Also sync to Profile tab elements
+    const profileLevel = document.getElementById('profile-level-str');
+    const profileBpVal = document.getElementById('profile-bp-val-str');
+    const profileXpFill = document.getElementById('profile-xp-bar-fill');
     
-    if (profileLevel) profileLevel.textContent = `Level ${prog.level} - ${prog.title}`;
-    if (profileAvatar) profileAvatar.textContent = prog.avatar;
+    if (profileLevel) profileLevel.textContent = `Level ${prog.level} • ${prog.title}`;
+    if (profileBpVal) {
+      profileBpVal.textContent = `${prog.bp.toLocaleString()} / ${(prog.level * 500).toLocaleString()} XP`;
+    }
+    if (profileXpFill) {
+      profileXpFill.style.width = `${prog.progressPercent}%`;
+    }
     
+    this.updateStatsGridUI();
     this.updateDailyChallengeUI();
+  },
+
+  initCareerStats() {
+    const statsObj = localStorage.getItem('dots_boxes_career_stats');
+    if (!statsObj) {
+      const defaults = {
+        gamesPlayed: 24,
+        wins: 16,
+        boxesCompleted: 342,
+        bestScore: 18,
+        maxStreak: 5
+      };
+      localStorage.setItem('dots_boxes_career_stats', JSON.stringify(defaults));
+    }
+  },
+
+  initBoxVault() {
+    const purchased = localStorage.getItem('dots_boxes_purchased_styles');
+    if (!purchased) {
+      localStorage.setItem('dots_boxes_purchased_styles', JSON.stringify(['classic']));
+    }
+  },
+
+  updateStatsGridUI() {
+    const statsObj = JSON.parse(localStorage.getItem('dots_boxes_career_stats') || '{}');
+    const gp = statsObj.gamesPlayed || 0;
+    const wins = statsObj.wins || 0;
+    const wr = gp > 0 ? Math.round((wins / gp) * 100) : 0;
+    const bc = statsObj.boxesCompleted || 0;
+    const bs = statsObj.bestScore || 0;
+    const ms = statsObj.maxStreak || 0;
+    
+    const gpEl = document.getElementById('stats-games-played');
+    const winsEl = document.getElementById('stats-wins');
+    const wrEl = document.getElementById('stats-win-rate');
+    const bcEl = document.getElementById('stats-boxes-completed');
+    const bsEl = document.getElementById('stats-best-score');
+    const msEl = document.getElementById('stats-max-streak');
+    
+    if (gpEl) gpEl.textContent = gp;
+    if (winsEl) winsEl.textContent = wins;
+    if (wrEl) wrEl.textContent = `${wr}%`;
+    if (bcEl) bcEl.textContent = bc;
+    if (bsEl) bsEl.textContent = bs;
+    if (msEl) msEl.textContent = ms;
+  },
+
+  openBoxVault() {
+    this.updateBoxVaultUI();
+    this.transitionToScreen('box-vault');
+    this.vibrate(15);
+  },
+
+  updateBoxVaultUI() {
+    const prog = this.getProgression();
+    const currencyBpEl = document.getElementById('vault-currency-bp');
+    if (currencyBpEl) currencyBpEl.textContent = prog.bp.toLocaleString();
+
+    const purchased = JSON.parse(localStorage.getItem('dots_boxes_purchased_styles') || '["classic"]');
+    
+    document.querySelectorAll('.shop-item-card').forEach(card => {
+      const style = card.getAttribute('data-shop-item');
+      const btn = card.querySelector('.shop-buy-btn');
+      if (!btn) return;
+
+      if (this.dotStyle === style) {
+        btn.textContent = 'Equipped';
+        btn.className = 'shop-buy-btn equipped';
+        btn.disabled = true;
+      } else if (purchased.includes(style)) {
+        btn.textContent = 'Equip';
+        btn.className = 'shop-buy-btn owned';
+        btn.disabled = false;
+      } else {
+        const cost = btn.getAttribute('data-cost');
+        btn.textContent = `${cost} BP`;
+        btn.className = 'shop-buy-btn';
+        btn.disabled = false;
+      }
+    });
+  },
+
+  purchaseDotStyle(style, cost) {
+    const purchased = JSON.parse(localStorage.getItem('dots_boxes_purchased_styles') || '["classic"]');
+    
+    if (purchased.includes(style)) {
+      // Equip item
+      this.dotStyle = style;
+      localStorage.setItem('dots_boxes_dot_style', style);
+      this.updateDotStyles();
+      this.updateBoxVaultUI();
+      this.vibrate(15);
+      
+      // Trigger achievement
+      if (style === 'neon') {
+        this.unlockAchievement('neon_dream');
+      }
+      return;
+    }
+
+    const prog = this.getProgression();
+    if (prog.bp < cost) {
+      alert(`Not enough BP! You need ${cost} BP, but currently have ${prog.bp} BP. Complete missions or win matches to earn more!`);
+      this.vibrate([100, 100]);
+      return;
+    }
+
+    // Buy style
+    let newBp = prog.bp - cost;
+    localStorage.setItem('dots_boxes_bp', newBp.toString());
+    purchased.push(style);
+    localStorage.setItem('dots_boxes_purchased_styles', JSON.stringify(purchased));
+    
+    this.dotStyle = style;
+    localStorage.setItem('dots_boxes_dot_style', style);
+    this.updateDotStyles();
+
+    // Update progression displays
+    this.updateDashboardProgressionUI();
+    this.updateBoxVaultUI();
+    this.sounds.playBox();
+    this.vibrate(30);
+  },
+
+  openAchievements() {
+    this.renderAchievementsList();
+    this.transitionToScreen('achievements');
+    this.vibrate(15);
+  },
+
+  renderAchievementsList() {
+    const container = document.getElementById('achievements-list-container');
+    if (!container) return;
+
+    const list = [
+      { id: 'first_win', name: 'First Win', desc: 'Defeat the Computer AI in a matches grid.', badge: '🏆' },
+      { id: 'grid_master', name: 'Grid Master', desc: 'Reach Level 5 progression status.', badge: '👑' },
+      { id: 'collector', name: 'Collectionist', desc: 'Capture over 100 boxes in total matches.', badge: '🎯' },
+      { id: 'streak_start', name: 'Streak Starter', desc: 'Sustain a 3-day daily challenge streak.', badge: '⚡' },
+      { id: 'neon_dream', name: 'Neon Dream', desc: 'Equip the Neon Glow dots in Box Vault.', badge: '💎' }
+    ];
+
+    const unlocked = JSON.parse(localStorage.getItem('dots_boxes_unlocked_achievements') || '[]');
+    
+    // Dynamic Level 5 auto-unlock
+    const prog = this.getProgression();
+    if (prog.level >= 5 && !unlocked.includes('grid_master')) {
+      unlocked.push('grid_master');
+      localStorage.setItem('dots_boxes_unlocked_achievements', JSON.stringify(unlocked));
+    }
+    // Dynamic Collector check
+    const careerStats = JSON.parse(localStorage.getItem('dots_boxes_career_stats') || '{}');
+    if ((careerStats.boxesCompleted || 0) >= 100 && !unlocked.includes('collector')) {
+      unlocked.push('collector');
+      localStorage.setItem('dots_boxes_unlocked_achievements', JSON.stringify(unlocked));
+    }
+
+    container.innerHTML = '';
+    list.forEach(item => {
+      const isUnlocked = unlocked.includes(item.id);
+      const card = document.createElement('div');
+      card.className = `achievement-card ${isUnlocked ? '' : 'locked'}`;
+      card.innerHTML = `
+        <div class="achievement-badge-container">${isUnlocked ? item.badge : '🔒'}</div>
+        <div class="achievement-details">
+          <span class="achievement-name">${item.name}</span>
+          <span class="achievement-desc">${item.desc}</span>
+        </div>
+        <span class="achievement-status-badge ${isUnlocked ? 'status-unlocked' : 'status-locked'}">
+          ${isUnlocked ? 'Unlocked' : 'Locked'}
+        </span>
+      `;
+      container.appendChild(card);
+    });
+  },
+
+  unlockAchievement(id) {
+    const unlocked = JSON.parse(localStorage.getItem('dots_boxes_unlocked_achievements') || '[]');
+    if (!unlocked.includes(id)) {
+      unlocked.push(id);
+      localStorage.setItem('dots_boxes_unlocked_achievements', JSON.stringify(unlocked));
+    }
+  },
+
+  openLeaderboard() {
+    this.renderLeaderboard('global');
+    this.transitionToScreen('leaderboard');
+    this.vibrate(15);
+  },
+
+  renderLeaderboard(tab) {
+    const container = document.getElementById('leaderboard-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const prog = this.getProgression();
+
+    if (tab === 'global') {
+      const mockGlobal = [
+        { rank: 1, name: 'Olivia', lvl: 8, bp: 2450, avatar: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="%23fee2e2"/><path d="M20 80c0-15 12-22 30-22s30 7 30 22z" fill="%23ca8a04"/><circle cx="50" cy="40" r="18" fill="%23ca8a04"/></svg>' },
+        { rank: 2, name: 'Liam', lvl: 7, bp: 2120, avatar: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="%23dbeafe"/><path d="M20 80c0-15 12-22 30-22s30 7 30 22z" fill="%231e3a8a"/><circle cx="50" cy="40" r="18" fill="%231e3a8a"/></svg>' },
+        { rank: 3, name: 'Noah', lvl: 7, bp: 1950, avatar: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="%23e0f2fe"/><path d="M20 80c0-15 12-22 30-22s30 7 30 22z" fill="%230369a1"/><circle cx="50" cy="40" r="18" fill="%230369a1"/></svg>' },
+        { rank: 4, name: 'Emma', lvl: 6, bp: 1650, avatar: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="%23fce7f3"/><path d="M20 80c0-15 12-22 30-22s30 7 30 22z" fill="%23be185d"/><circle cx="50" cy="40" r="18" fill="%23be185d"/></svg>' },
+        { rank: 5, name: 'James', lvl: 6, bp: 1420, avatar: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="%23fef3c7"/><path d="M20 80c0-15 12-22 30-22s30 7 30 22z" fill="%23b45309"/><circle cx="50" cy="40" r="18" fill="%23b45309"/></svg>' }
+      ];
+
+      // Add user rank dynamically
+      let userRankAdded = false;
+      mockGlobal.forEach(player => {
+        if (prog.bp > player.bp && !userRankAdded) {
+          // User ranks higher than this player!
+          // Realistically just push "You" before this rank
+        }
+      });
+
+      mockGlobal.forEach(p => {
+        const item = document.createElement('div');
+        item.className = 'lead-item-card';
+        const rankClass = p.rank === 1 ? 'first' : (p.rank === 2 ? 'second' : (p.rank === 3 ? 'third' : ''));
+        item.innerHTML = `
+          <span class="lead-rank-num ${rankClass}">${p.rank}</span>
+          <img class="lead-avatar-img" src="${p.avatar}" alt="${p.name}">
+          <div class="lead-user-details">
+            <span class="lead-name-text">${p.name}</span>
+            <span class="lead-level-text">Level ${p.lvl}</span>
+          </div>
+          <span class="lead-score-val">${p.bp.toLocaleString()} BP</span>
+        `;
+        container.appendChild(item);
+      });
+
+      // Add "You" at the bottom as rank #23
+      const userItem = document.createElement('div');
+      userItem.className = 'lead-item-card highlighted';
+      userItem.innerHTML = `
+        <span class="lead-rank-num">23</span>
+        <img class="lead-avatar-img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23dbeafe'/><circle cx='50' cy='42' r='20' fill='%231e3a8a'/><path d='M20 80c0-18 15-25 30-25s30 7 30 25z' fill='%231e3a8a'/></svg>" alt="You">
+        <div class="lead-user-details">
+          <span class="lead-name-text">You</span>
+          <span class="lead-level-text">Level ${prog.level} • ${prog.title}</span>
+        </div>
+        <span class="lead-score-val">${prog.bp.toLocaleString()} BP</span>
+      `;
+      container.appendChild(userItem);
+
+    } else if (tab === 'weekly') {
+      const mockWeekly = [
+        { rank: 1, name: 'Noah', lvl: 7, bp: 850, avatar: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="%23e0f2fe"/><path d="M20 80c0-15 12-22 30-22s30 7 30 22z" fill="%230369a1"/><circle cx="50" cy="40" r="18" fill="%230369a1"/></svg>' },
+        { rank: 2, name: 'Olivia', lvl: 8, bp: 720, avatar: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="%23fee2e2"/><path d="M20 80c0-15 12-22 30-22s30 7 30 22z" fill="%23ca8a04"/><circle cx="50" cy="40" r="18" fill="%23ca8a04"/></svg>' },
+        { rank: 3, name: 'Emma', lvl: 6, bp: 500, avatar: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="%23fce7f3"/><path d="M20 80c0-15 12-22 30-22s30 7 30 22z" fill="%23be185d"/><circle cx="50" cy="40" r="18" fill="%23be185d"/></svg>' }
+      ];
+
+      mockWeekly.forEach(p => {
+        const item = document.createElement('div');
+        item.className = 'lead-item-card';
+        const rankClass = p.rank === 1 ? 'first' : (p.rank === 2 ? 'second' : (p.rank === 3 ? 'third' : ''));
+        item.innerHTML = `
+          <span class="lead-rank-num ${rankClass}">${p.rank}</span>
+          <img class="lead-avatar-img" src="${p.avatar}" alt="${p.name}">
+          <div class="lead-user-details">
+            <span class="lead-name-text">${p.name}</span>
+            <span class="lead-level-text">Level ${p.lvl}</span>
+          </div>
+          <span class="lead-score-val">${p.bp.toLocaleString()} BP</span>
+        `;
+        container.appendChild(item);
+      });
+
+      // Weekly user rank
+      const userItem = document.createElement('div');
+      userItem.className = 'lead-item-card highlighted';
+      userItem.innerHTML = `
+        <span class="lead-rank-num">14</span>
+        <img class="lead-avatar-img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23dbeafe'/><circle cx='50' cy='42' r='20' fill='%231e3a8a'/><path d='M20 80c0-18 15-25 30-25s30 7 30 25z' fill='%231e3a8a'/></svg>" alt="You">
+        <div class="lead-user-details">
+          <span class="lead-name-text">You</span>
+          <span class="lead-level-text">This week progress</span>
+        </div>
+        <span class="lead-score-val">240 BP</span>
+      `;
+      container.appendChild(userItem);
+
+    } else if (tab === 'friends') {
+      // Local Matchup history translated as ranking
+      this.loadStats();
+      const aiStats = this.stats.ai || { wins: 0, losses: 0, draws: 0 };
+      const friendsEntries = Object.entries(this.stats.friends || {});
+
+      // Add AI matchup row
+      const aiRow = document.createElement('div');
+      aiRow.className = 'lead-item-card';
+      aiRow.innerHTML = `
+        <span class="lead-rank-num first">#</span>
+        <div class="achievement-badge-container" style="background:rgba(59,130,246,0.08); width:36px; height:36px; border-radius:50%; font-size:1.1rem; flex-shrink:0;">🤖</div>
+        <div class="lead-user-details" style="margin-left:8px;">
+          <span class="lead-name-text">vs. Computer (AI)</span>
+          <span class="lead-level-text">${aiStats.wins} Wins • ${aiStats.losses} Losses • ${aiStats.draws} Draws</span>
+        </div>
+      `;
+      container.appendChild(aiRow);
+
+      if (friendsEntries.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'shop-empty-state';
+        empty.textContent = "No friends matchups recorded yet. Play a local Pass & Play game!";
+        container.appendChild(empty);
+      } else {
+        friendsEntries.forEach(([name, data], idx) => {
+          const item = document.createElement('div');
+          item.className = 'lead-item-card';
+          item.innerHTML = `
+            <span class="lead-rank-num">${idx + 1}</span>
+            <div class="achievement-badge-container" style="background:rgba(16,185,129,0.08); width:36px; height:36px; border-radius:50%; font-size:1.1rem; flex-shrink:0; color:#10b981;">👤</div>
+            <div class="lead-user-details" style="margin-left:8px;">
+              <span class="lead-name-text">${name}</span>
+              <span class="lead-level-text">${data.wins} Wins • ${data.losses} Losses • ${data.draws} Draws</span>
+            </div>
+          `;
+          container.appendChild(item);
+        });
+      }
+    }
   },
 
   initDailyChallenge() {
@@ -2035,8 +2534,8 @@ const Game = {
     
     if (!challenge || challenge.lastDate !== today) {
       const challenges = [
+        { desc: "Complete 20 Boxes", type: "capture_boxes", target: 20, progress: 12, reward: 100, completed: false },
         { desc: "Win a game vs Computer", type: "win_ai", target: 1, progress: 0, reward: 100, completed: false },
-        { desc: "Capture 15 boxes in total", type: "capture_boxes", target: 15, progress: 0, reward: 100, completed: false },
         { desc: "Complete a local PvP match", type: "complete_pvp", target: 1, progress: 0, reward: 100, completed: false }
       ];
       const selected = challenges[Math.floor(Math.random() * challenges.length)];
@@ -2055,39 +2554,61 @@ const Game = {
     }
     if (!challenge) return;
     
-    const descEl = document.getElementById('dash-challenge-desc');
-    const rewardEl = document.getElementById('dash-challenge-reward');
-    const statusEl = document.getElementById('dash-challenge-status');
-    const progressFill = document.getElementById('dash-challenge-progress-fill');
+    // Today's date formatting
+    const dateStrEl = document.getElementById('daily-detail-date-str');
+    if (dateStrEl) {
+      const options = { month: 'long', day: 'numeric', year: 'numeric' };
+      dateStrEl.textContent = new Date().toLocaleDateString('en-US', options);
+    }
     
-    if (descEl) descEl.textContent = challenge.desc;
-    if (rewardEl) {
+    // --- Sync Dedicated Daily Tab Pane ---
+    const detailDescEl = document.getElementById('daily-detail-challenge-desc');
+    const detailRewardEl = document.getElementById('daily-detail-reward');
+    const detailStatusEl = document.getElementById('daily-detail-status');
+    const detailProgressFill = document.getElementById('daily-detail-progress-fill');
+    const dailyPlayBtn = document.getElementById('daily-play-btn');
+    
+    if (detailDescEl) detailDescEl.textContent = challenge.desc;
+    if (detailRewardEl) {
       if (challenge.completed) {
-        rewardEl.textContent = "CLAIMED";
-        rewardEl.style.background = "rgba(16, 185, 129, 0.2)";
-        rewardEl.style.color = "#10b981";
+        detailRewardEl.textContent = "CLAIMED";
+        detailRewardEl.parentElement.style.color = "#10b981";
       } else {
-        rewardEl.textContent = `+${challenge.reward} BP`;
-        rewardEl.style.background = ""; // Reset inline
-        rewardEl.style.color = "";
+        detailRewardEl.textContent = `+${challenge.reward} BP`;
+        detailRewardEl.parentElement.style.color = "";
       }
     }
-    if (statusEl) {
+    if (detailStatusEl) {
       if (challenge.completed) {
-        statusEl.innerHTML = "✅ Done";
+        detailStatusEl.textContent = "Completed! Come back tomorrow.";
+        detailStatusEl.style.color = "#10b981";
       } else {
-        statusEl.textContent = `${challenge.progress}/${challenge.target}`;
+        detailStatusEl.textContent = `${challenge.progress} / ${challenge.target}`;
+        detailStatusEl.style.color = "";
       }
     }
-    if (progressFill) {
+    if (detailProgressFill) {
       const pct = challenge.completed ? 100 : (challenge.progress / challenge.target) * 100;
-      progressFill.style.width = `${pct}%`;
+      detailProgressFill.style.width = `${pct}%`;
+    }
+    if (dailyPlayBtn) {
       if (challenge.completed) {
-        progressFill.style.backgroundColor = "#10b981";
+        dailyPlayBtn.disabled = true;
+        const btnText = dailyPlayBtn.querySelector('span');
+        if (btnText) btnText.textContent = "Completed";
+        dailyPlayBtn.style.opacity = "0.6";
+        dailyPlayBtn.style.cursor = "default";
       } else {
-        progressFill.style.backgroundColor = ""; // reset to CSS default
+        dailyPlayBtn.disabled = false;
+        const btnText = dailyPlayBtn.querySelector('span');
+        if (btnText) btnText.textContent = "PLAY CHALLENGE";
+        dailyPlayBtn.style.opacity = "";
+        dailyPlayBtn.style.cursor = "";
       }
     }
+    
+    // --- Update Streak Display ---
+    this.updateStreakUI();
   },
   
   updateChallengeProgress(type, amount) {
@@ -2109,6 +2630,9 @@ const Game = {
       bp += challenge.reward;
       localStorage.setItem('dots_boxes_bp', bp.toString());
       
+      // Update streak
+      this.updateStreak();
+      
       // Play sound
       this.sounds.playBox();
       
@@ -2118,6 +2642,138 @@ const Game = {
     
     localStorage.setItem('dots_boxes_daily_challenge', JSON.stringify(challenge));
   },
+
+  updateStreak() {
+    const today = new Date().toDateString();
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    let streak = parseInt(localStorage.getItem('dots_boxes_streak') || '0', 10);
+    const lastCompleted = localStorage.getItem('dots_boxes_last_challenge_date');
+    
+    if (lastCompleted === today) {
+      // Already completed today
+    } else if (lastCompleted === yesterday) {
+      streak++;
+      localStorage.setItem('dots_boxes_streak', streak.toString());
+      localStorage.setItem('dots_boxes_last_challenge_date', today);
+    } else {
+      streak = 1;
+      localStorage.setItem('dots_boxes_streak', streak.toString());
+      localStorage.setItem('dots_boxes_last_challenge_date', today);
+    }
+  },
+
+  updateStreakUI() {
+    let streak = parseInt(localStorage.getItem('dots_boxes_streak') || '0', 10);
+    const lastCompleted = localStorage.getItem('dots_boxes_last_challenge_date');
+    const today = new Date().toDateString();
+    
+    // Check if streak was broken yesterday
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    if (lastCompleted !== today && lastCompleted !== yesterday) {
+      streak = 0;
+      localStorage.setItem('dots_boxes_streak', '0');
+    }
+    
+    const descEl = document.getElementById('daily-streak-desc');
+    if (descEl) {
+      if (streak === 0) {
+        descEl.textContent = "Complete today's challenge to start a streak!";
+      } else {
+        descEl.textContent = `You are on a ${streak}-day streak!`;
+      }
+    }
+    
+    const dayContainers = document.querySelectorAll('.streak-days .streak-day');
+    const daysOfWeek = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    const currentDayIndex = (new Date().getDay() + 6) % 7; // Monday = 0, Sunday = 6
+    
+    dayContainers.forEach((day, index) => {
+      const span = day.querySelector('span');
+      if (span) span.textContent = daysOfWeek[index];
+      
+      const check = day.querySelector('.check');
+      let isCompleted = false;
+      
+      if (index === currentDayIndex) {
+        isCompleted = (lastCompleted === today);
+        day.id = "streak-today-indicator";
+      } else if (index < currentDayIndex) {
+        const diff = currentDayIndex - index;
+        isCompleted = (streak > diff);
+        day.removeAttribute('id');
+      } else {
+        day.removeAttribute('id');
+      }
+      
+      day.classList.toggle('active', isCompleted);
+      if (check) {
+        check.textContent = isCompleted ? "✓" : "";
+      }
+    });
+  },
+
+  switchTab(tabName) {
+    document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+      item.classList.toggle('active', item.getAttribute('data-tab') === tabName);
+    });
+    
+    document.querySelectorAll('#dashboard-screen .tab-pane').forEach(pane => {
+      pane.classList.toggle('active', pane.id === `tab-${tabName}`);
+    });
+    
+    this.vibrate(10);
+  },
+
+  playDailyChallenge() {
+    let challenge = null;
+    try {
+      challenge = JSON.parse(localStorage.getItem('dots_boxes_daily_challenge'));
+    } catch (e) {
+      console.error(e);
+    }
+    if (!challenge) return;
+    
+    if (challenge.completed) {
+      alert("You have already completed today's challenge! Come back tomorrow.");
+      return;
+    }
+    
+    this.sounds.init();
+    
+    if (challenge.type === 'win_ai') {
+      this.gameMode = 'ai';
+      this.aiDifficulty = 'medium';
+      this.gridSize = 5;
+      this.p1Color = '#3f47e0';
+      this.p2Color = '#b91c1c';
+      this.p1Name = 'You';
+      this.p2Name = 'Computer';
+      this.applyPlayerColorVariables();
+      this.launchGame();
+    } else if (challenge.type === 'capture_boxes') {
+      this.gameMode = 'ai';
+      this.aiDifficulty = 'medium';
+      this.gridSize = 5;
+      this.p1Color = '#3f47e0';
+      this.p2Color = '#b91c1c';
+      this.p1Name = 'You';
+      this.p2Name = 'Computer';
+      this.applyPlayerColorVariables();
+      this.launchGame();
+    } else if (challenge.type === 'complete_pvp') {
+      this.gameMode = 'pvp';
+      this.gridSize = 5;
+      this.p1Color = '#3f47e0';
+      this.p2Color = '#b91c1c';
+      const p1In = document.getElementById('pvp-p1-name-input');
+      const p2In = document.getElementById('pvp-p2-name-input');
+      if (p1In) p1In.value = '';
+      if (p2In) p2In.value = '';
+      this.setupColorPalettes();
+      this.applyPlayerColorVariables();
+      this.transitionToScreen('setup-pass-play');
+    }
+  }
 };
 
 // Initialize App on DOM Content Loaded
